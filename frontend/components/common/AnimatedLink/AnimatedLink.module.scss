@@ -1,0 +1,28 @@
+.link {
+  text-decoration: none;
+  text-transform: uppercase;
+  color: #000;
+  letter-spacing: 0.15em;
+  padding: 5px 20px;
+  display: inline-block;
+  position: relative;
+  transition: color 0.5s ease;
+  font-size: 12px;
+
+  &:after {
+    bottom: 0;
+    content: '';
+    display: block;
+    height: 2px;
+    left: 50%;
+    position: absolute;
+    background: #000;
+    transition: width 0.5s ease 0s, left 0.5s ease 0s;
+    width: 0;
+  }
+
+  &:hover:after {
+    width: calc(100% - 40px);
+    left: 20px;
+  }
+}

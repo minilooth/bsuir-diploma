@@ -1,0 +1,15 @@
+.hover-underline {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+@for $px from 5 through 20 {
+  .font-#{$px * 2} {
+    font-size: #{$px * 2}px !important;
+  }
+}
