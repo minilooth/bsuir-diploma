@@ -22,7 +22,7 @@ import {Axios, getAxiosErrorData} from "core/axios";
 import {AuthRoutes} from "core/api";
 import {AppRoutes} from "core/routes";
 import {User} from "types/user";
-import {setUser} from 'redux/slices/userSlice';
+import {setCurrentUser} from 'redux/slices/usersSlice';
 import {useTypedDispatch} from "redux/hooks";
 import {LoginSchema} from "schemas/login";
 
@@ -54,7 +54,7 @@ export const LoginCard: React.FC = () => {
     setLoading(true);
     try {
       const {data: user} = await Axios.post<User | null>(AuthRoutes.LOGIN, data);
-      await dispatch(setUser(user));
+      await dispatch(setCurrentUser(user));
       await router.push(AppRoutes.HOME);
     } catch (err) {
       enqueueSnackbar(getAxiosErrorData(err), SnackbarErrorOptions);

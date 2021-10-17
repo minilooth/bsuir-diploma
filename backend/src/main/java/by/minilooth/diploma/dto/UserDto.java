@@ -15,10 +15,12 @@ public class UserDto extends AbstractDto {
     private String username;
     private String email;
     private String firstname;
+    private String middlename;
     private String lastname;
     private String phoneNumber;
     private Boolean isEmailConfirmed;
+    private Boolean isAccountNonLocked;
     private List<RoleDto> roles;
-    private String avatar;
+    private ImageDto avatar;
 
 }

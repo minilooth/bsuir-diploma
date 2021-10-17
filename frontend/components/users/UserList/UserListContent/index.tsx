@@ -1,5 +1,6 @@
 import React from 'react';
 import {Grid} from "@mui/material";
+
 import {User} from "types/user";
 import {UserListItem} from "components/users/UserList/UserListItem";
 
@@ -8,14 +9,16 @@ interface UserListContentProps {
 }
 
 export const UserListContent: React.FC<UserListContentProps> = ({users}) => {
+  const empty = !users?.length;
+
   return (
     <Grid container spacing={2}>
-      {!users || (users && !users.length && (
-        <Grid item xs={12}>
-          Список пользователей пока пуст!
+      {empty && (
+        <Grid item xs={12} className="d-flex justify-center">
+          Не удалось найти пользователей или список пользователей пока пуст! &#128577;
         </Grid>
-      ))}
-      {users && users.length && users.map((user, index) =>
+      )}
+      {!empty && users.map((user, index) =>
         <UserListItem key={index} user={user}/>
       )}
     </Grid>

@@ -15,6 +15,7 @@ import by.minilooth.diploma.service.users.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -33,16 +34,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 
 @Service
-@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserService userService;
-    private final JwtUtils jwtUtils;
-    private final PasswordEncoder passwordEncoder;
-    private final RoleService roleService;
-    private final ConfirmationTokenService confirmationTokenService;
-    private final MailService mailService;
+    @Autowired private AuthenticationManager authenticationManager;
+    @Autowired private UserService userService;
+    @Autowired private JwtUtils jwtUtils;
+    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired private RoleService roleService;
+    @Autowired private ConfirmationTokenService confirmationTokenService;
+    @Autowired private MailService mailService;
 
     @Override
     public Boolean isLoggedIn() {

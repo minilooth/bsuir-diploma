@@ -1,8 +1,6 @@
 import {createTheme} from "@mui/material";
 import {lightBlue, red} from "@mui/material/colors";
 
-const muiPrefix = '.Mui-';
-
 export const theme = createTheme({
   palette: {
     primary: {
@@ -30,6 +28,34 @@ export const theme = createTheme({
         },
       }
     },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          paddingBottom: 0
+        }
+      }
+    },
+    // MuiInputLabel: {
+    //   styleOverrides: {
+    //     root: {
+    //       fontSize: 12
+    //     }
+    //   }
+    // },
+    // MuiFormLabel: {
+    //   styleOverrides: {
+    //     root: {
+    //       fontSize: 12
+    //     }
+    //   }
+    // },
+    // MuiSelect: {
+    //   styleOverrides: {
+    //     nativeInput: {
+    //       fontSize: 12
+    //     }
+    //   }
+    // },
     MuiTypography: {
       styleOverrides: {
         body1: {

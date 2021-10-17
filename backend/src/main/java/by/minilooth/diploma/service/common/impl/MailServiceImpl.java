@@ -41,4 +41,17 @@ public class MailServiceImpl implements MailService {
         emailSender.send(message);
     }
 
+    @Override
+    public void sendConfirmEmailMail(User user, ConfirmationToken confirmationToken) {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        message.setTo(user.getEmail());
+        message.setSubject("Complete Registration!");
+        message.setFrom("no-reply@minilooth.by");
+        message.setText("To confirm your e-mail, please click here : " +
+                "http://localhost:3000/confirm-account?token=" + confirmationToken.getToken());
+
+        emailSender.send(message);
+    }
+
 }

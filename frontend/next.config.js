@@ -4,4 +4,7 @@ module.exports = {
   env: {
     API_URL: "http://localhost:8080"
   },
+  images: {
+    domains: ['localhost'],
+  },
 }

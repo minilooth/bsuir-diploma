@@ -5,13 +5,13 @@ import {TextField} from "@mui/material";
 interface InputProps {
   id?: string;
   type?: string;
-  label?: string;
+  label?: string | React.ReactNode;
   variant?: "standard" | "filled" | "outlined";
   placeholder?: string;
   className?: string;
   name?: string;
   error?: boolean;
-  helperText?: string;
+  helperText?: string | React.ReactNode;
   inputProps?: Partial<StandardInputProps>;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent) => void;

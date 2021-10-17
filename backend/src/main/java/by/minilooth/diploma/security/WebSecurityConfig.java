@@ -2,7 +2,7 @@ package by.minilooth.diploma.security;
 
 import javax.servlet.http.HttpServletResponse;
 
-import by.minilooth.diploma.service.users.impl.AuthServiceImpl;
+import by.minilooth.diploma.service.users.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +32,7 @@ import java.util.Collections;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired private AuthServiceImpl authService;
+    @Autowired private AuthService authService;
     @Autowired private AuthEntryPointJwt unauthorizedHandler;
     @Autowired private AccessDeniedHandlerImpl accessDeniedHandlerImpl;
 

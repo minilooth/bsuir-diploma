@@ -31,6 +31,9 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "firstname")
     private String firstname;
 
+    @Column(name = "middlename")
+    private String middlename;
+
     @Column(name = "lastname")
     private String lastname;
 
@@ -40,6 +43,10 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "is_email_confirmed", nullable = false, columnDefinition = "TINYINT(0)")
     @Builder.Default
     private Boolean isEmailConfirmed = false;
+
+    @Column(name = "is_account_non_locked", nullable = false, columnDefinition = "TINYINT(1)")
+    @Builder.Default
+    private Boolean isAccountNonLocked = true;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
@@ -69,7 +76,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override

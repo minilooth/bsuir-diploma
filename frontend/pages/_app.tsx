@@ -2,10 +2,11 @@ import React from 'react';
 import type {AppProps} from 'next/app'
 import {ThemeProvider} from "@mui/system";
 import {SnackbarProvider} from "notistack";
-import {Provider} from "react-redux";
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import {theme} from "theme/theme"
-import {store} from "redux/store";
+import {wrapper} from "redux/store";
 import {InitializeLayout} from "components/layouts/InitializeLayout";
 
 import 'styles/globals.scss'
@@ -15,7 +16,7 @@ function MyApp(appProps: AppProps) {
   const {user} = pageProps;
 
   return (
-    <Provider store={store}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <ThemeProvider theme={theme}>
         <SnackbarProvider maxSnack={3}>
           <InitializeLayout user={user}>
@@ -23,8 +24,8 @@ function MyApp(appProps: AppProps) {
           </InitializeLayout>
         </SnackbarProvider>
       </ThemeProvider>
-    </Provider>
+    </LocalizationProvider>
   )
 }
 
-export default MyApp;
+export default wrapper.withRedux(MyApp);

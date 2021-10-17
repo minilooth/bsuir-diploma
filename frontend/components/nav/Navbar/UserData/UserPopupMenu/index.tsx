@@ -9,7 +9,7 @@ import {List, ListItem, ListItemIcon, ListItemText} from "@mui/material";
 import {SnackbarErrorOptions} from "core/snackbar/snackbar-options";
 import {Axios, getAxiosErrorData} from "core/axios";
 import {AuthRoutes} from "core/api";
-import {setUser} from 'redux/slices/userSlice';
+import {setCurrentUser} from 'redux/slices/usersSlice';
 import {AppRoutes} from "core/routes";
 
 import styles from 'components/nav/Navbar/UserData/UserPopupMenu/UserPopupMenu.module.scss';
@@ -23,7 +23,7 @@ export const UserPopupMenu: React.FC = () => {
     try {
       await Axios.get(AuthRoutes.LOGOUT);
       await router.push(AppRoutes.LOGIN);
-      dispatch(setUser(null));
+      dispatch(setCurrentUser(null));
     } catch (err) {
       enqueueSnackbar(getAxiosErrorData(err), SnackbarErrorOptions);
     }

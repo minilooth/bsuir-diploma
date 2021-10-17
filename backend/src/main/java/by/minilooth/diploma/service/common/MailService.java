@@ -7,5 +7,6 @@ public interface MailService {
 
     void sendConfirmRegisterMain(User user, String password, ConfirmationToken confirmationToken);
     void sendRestorePasswordMail(User user, String password);
+    void sendConfirmEmailMail(User user, ConfirmationToken confirmationToken);
 
 }

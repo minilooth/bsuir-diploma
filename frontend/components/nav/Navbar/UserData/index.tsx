@@ -3,13 +3,14 @@ import {Avatar, Box, ClickAwayListener, Fade, List, ListItem, ListItemAvatar, Li
 
 import {UserPopupMenu} from "components/nav/Navbar/UserData/UserPopupMenu";
 import {useTypedSelector} from "redux/hooks";
-import {selectCurrentUser} from "redux/slices/userSlice";
+import {selectCurrentUser} from "redux/slices/usersSlice";
 
 import styles from "components/nav/Navbar/UserData/UserData.module.scss";
 
 export const UserData: React.FC = () => {
   const [userPopupOpened, setUserPopupOpened] = React.useState(false);
   const user = useTypedSelector(selectCurrentUser);
+  const {avatar, username} = user || {};
 
   const onClickUser = () => {
     setUserPopupOpened((prev) => !prev);
@@ -25,9 +26,9 @@ export const UserData: React.FC = () => {
         <List disablePadding component="div" className="w-200 h-50">
           <ListItem button onClick={onClickUser} className="hp-100">
             <ListItemAvatar>
-              <Avatar src={user?.avatar} alt={user?.username} className={styles.avatar}/>
+              <Avatar src={avatar && avatar.uri ? `${process.env.API_URL + avatar.uri}` : ''} alt={username} className={styles.avatar}/>
             </ListItemAvatar>
-            <ListItemText primary={user?.username} className={styles.username} disableTypography/>
+            <ListItemText primary={username} className={styles.username} disableTypography/>
           </ListItem>
         </List>
       </ClickAwayListener>
