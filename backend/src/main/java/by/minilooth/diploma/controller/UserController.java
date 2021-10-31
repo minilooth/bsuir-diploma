@@ -1,13 +1,7 @@
 package by.minilooth.diploma.controller;
 
-import by.minilooth.diploma.dto.ChangePasswordDto;
-import by.minilooth.diploma.dto.ProcessUserDto;
-import by.minilooth.diploma.dto.UserDto;
-import by.minilooth.diploma.dto.UserFilterDto;
-import by.minilooth.diploma.dto.mapper.ChangePasswordMapper;
-import by.minilooth.diploma.dto.mapper.ProcessUserMapper;
-import by.minilooth.diploma.dto.mapper.UserFilterMapper;
-import by.minilooth.diploma.dto.mapper.UserMapper;
+import by.minilooth.diploma.dto.*;
+import by.minilooth.diploma.dto.mapper.*;
 import by.minilooth.diploma.exception.ActionIsImpossibleException;
 import by.minilooth.diploma.exception.PasswordsAreDifferentException;
 import by.minilooth.diploma.exception.users.UserAlreadyExistsException;
@@ -15,6 +9,7 @@ import by.minilooth.diploma.exception.users.UserNotFoundException;
 import by.minilooth.diploma.models.ChangePassword;
 import by.minilooth.diploma.models.ProcessUser;
 import by.minilooth.diploma.models.UserFilter;
+import by.minilooth.diploma.models.UserList;
 import by.minilooth.diploma.models.bean.users.Role;
 import by.minilooth.diploma.models.bean.users.User;
 import by.minilooth.diploma.service.users.UserService;
@@ -23,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
@@ -32,6 +25,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+    private final UserListMapper userListMapper;
     private final UserFilterMapper userFilterMapper;
     private final ProcessUserMapper processUserMapper;
     private final ChangePasswordMapper changePasswordMapper;
@@ -40,9 +34,9 @@ public class UserController {
     @PreAuthorize("hasRole('" + Role.ADMIN + "')")
     public ResponseEntity<?> getAll(@RequestBody UserFilterDto userFilterDto) {
         UserFilter userFilter = userFilterMapper.toEntity(userFilterDto);
-        List<User> users = userService.getAll(userFilter);
-        List<UserDto> userDtos = userMapper.toDto(users);
-        return ResponseEntity.ok(userDtos);
+        UserList userList = userService.getAll(userFilter);
+        UserListDto userListDto = userListMapper.toDto(userList);
+        return ResponseEntity.ok(userListDto);
     }
 
     @PutMapping

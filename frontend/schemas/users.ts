@@ -34,3 +34,20 @@ export const ProcessUserSchema = yup.object().shape({
   role: yup.string().required('Это обязательное поле')
 })
 
+export const ChangePasswordSchemaWithOldPassword = yup.object().shape({
+  oldPassword: yup.string().required('Это обязательное поле'),
+  newPassword: yup.string().required('Это обязательное поле'),
+  confirmPassword: yup.string().required('Это обязательное поле').test('passwords-match', 'Пароли не совпадают',
+    (value, context) => context.parent.newPassword === value)
+})
+
+export const ChangePasswordSchemaWithoutOldPassword = yup.object().shape({
+  newPassword: yup.string().required('Это обязательное поле'),
+  confirmPassword: yup.string().required('Это обязательное поле').test('passwords-match', 'Пароли не совпадают',
+    (value, context) => context.parent.newPassword === value)
+})
+
+export const ChangePasswordSchema = yup.lazy(({oldPassword}) => oldPassword
+  ? ChangePasswordSchemaWithOldPassword
+  : ChangePasswordSchemaWithoutOldPassword);
+

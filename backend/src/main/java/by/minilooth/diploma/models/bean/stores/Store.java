@@ -1,6 +1,7 @@
 package by.minilooth.diploma.models.bean.stores;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
+import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.models.enums.StoreType;
 import lombok.*;
 
@@ -29,5 +30,13 @@ public class Store extends AbstractEntity {
 
     @OneToMany(mappedBy = "store")
     private Set<Availability> availabilities;
+
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name = "store_image",
+            joinColumns =
+                    { @JoinColumn(name = "store_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "image_id", referencedColumnName = "id") })
+    private Image image;
 
 }

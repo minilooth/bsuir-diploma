@@ -1,6 +1,7 @@
 package by.minilooth.diploma.models.bean.common;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
+import by.minilooth.diploma.models.bean.stores.Store;
 import by.minilooth.diploma.models.bean.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -20,9 +21,13 @@ public class Image extends AbstractEntity {
     private String filename;
 
     @OneToOne(mappedBy = "avatar", fetch = FetchType.LAZY)
-    @JsonIgnore
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
+
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Store store;
 
 }

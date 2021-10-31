@@ -8,6 +8,7 @@ import by.minilooth.diploma.exception.users.UserNotFoundException;
 import by.minilooth.diploma.models.ChangePassword;
 import by.minilooth.diploma.models.ProcessUser;
 import by.minilooth.diploma.models.UserFilter;
+import by.minilooth.diploma.models.UserList;
 import by.minilooth.diploma.models.bean.users.User;
 
 import java.util.List;
@@ -26,9 +27,11 @@ public interface UserService {
     Optional<User> getByUsername(String username);
     Optional<User> getByEmail(String email);
     List<User> getAll();
-    List<User> getAll(UserFilter filter);
+    UserList getAll(UserFilter filter);
+    Optional<User> getById(Long id);
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+    Boolean existsByPhoneNumber(String phoneNumber);
     void confirmEmail(String token);
 
 }

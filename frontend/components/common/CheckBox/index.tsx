@@ -1,30 +1,33 @@
 import React from "react";
 import {Checkbox} from "@mui/material";
-import {Controller} from "react-hook-form"
-import {Control} from "react-hook-form/dist/types";
 
 interface CheckBoxProps {
-  control?: Control;
-  name: string;
+  name?: string;
+  checked?: boolean;
   defaultValue?: string | number | readonly string[];
   defaultChecked?: boolean;
+  value?: any;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent) => void;
+  size?: 'medium' | 'small';
+  sx?: any;
 }
 
-export const CheckBox: React.FC<CheckBoxProps> = ({control, name, defaultValue, defaultChecked}) => {
+export const CheckBox = React.forwardRef<HTMLInputElement, CheckBoxProps>(({name, checked, defaultValue, defaultChecked, value, onChange, onBlur, size, sx}, ref) => {
   return (
-    <Controller
-      control={control}
+    <Checkbox
+      color={"primary"}
       name={name}
+      checked={checked}
       defaultValue={defaultValue}
-      render={({field: {onChange, value}}) => (
-        <Checkbox
-          color='primary'
-          value={value}
-          defaultValue={defaultValue}
-          defaultChecked={defaultChecked}
-          onChange={onChange}
-        />
-      )}
+      defaultChecked={defaultChecked}
+      inputRef={ref}
+      onChange={onChange}
+      onBlur={onBlur}
+      size={size}
+      sx={sx}
     />
   )
-}
+})
+
+CheckBox.displayName = 'CheckBox';

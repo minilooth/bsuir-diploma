@@ -25,9 +25,4 @@ public class Generation extends AbstractEntity {
     @JoinColumn(name = "model_id", nullable = false)
     private Model model;
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @OneToMany(mappedBy = "generation", cascade = CascadeType.ALL)
-    private Set<Vehicle> vehicles = new HashSet<>();
-
 }

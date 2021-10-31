@@ -1,16 +1,8 @@
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 
 import {User, UserFilter, UserSort} from "types/user";
-import {AppDispatch, RootState} from "redux/store";
-import {HYDRATE} from "next-redux-wrapper";
-import {Axios} from "core/axios";
-import {AuthRoutes} from "core/api";
-import {IncomingHttpHeaders} from "http";
-import {RegisterStep} from "types/register";
-import {register} from "redux/slices/registerSlice";
+import {RootState} from "redux/store";
 import {UserService} from "service/UserService";
-import {ParsedUrlQuery} from "querystring";
-import {QueryUtils} from "utils/QueryUtils";
 import {SortDirection} from "types/common/sort-direction";
 
 interface UsersSliceState {
@@ -46,8 +38,6 @@ export const getAll = createAsyncThunk(
       page
     };
 
-    console.log()
-
     return await UserService.getAll(filter, headers);
   })
 
@@ -65,8 +55,9 @@ const usersSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getAll.fulfilled, (state, action) => {
-      state.users = action.payload;
-    })
+      state.users = action.payload.users;
+      state.pages = action.payload.pages;
+    });
   }
 })
 

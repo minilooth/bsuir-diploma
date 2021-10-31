@@ -21,6 +21,11 @@ export interface Role {
   authority: RoleEnum;
 }
 
+export interface UserList {
+  users: User[];
+  pages: number;
+}
+
 export enum RoleEnum {
   ADMIN = 'ADMIN',
   EMPLOYEE = 'EMPLOYEE'
@@ -86,5 +91,5 @@ export interface ProcessUser {
 export interface ChangePassword {
   oldPassword?: string;
   newPassword: string;
-  confirm: string;
+  confirmPassword: string;
 }

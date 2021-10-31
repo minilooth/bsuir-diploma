@@ -1,4 +1,4 @@
-import {ChangePassword, ProcessUser, User, UserFilter} from "types/user";
+import {ChangePassword, ProcessUser, User, UserFilter, UserList} from "types/user";
 import {IncomingHttpHeaders} from "http";
 import {Axios} from "core/axios";
 
@@ -10,11 +10,11 @@ enum UserServiceRoutes {
 
 export class UserService {
 
-  private static readonly URL = '/user'
+  private static readonly URL = '/user';
 
-  static async getAll(filter: UserFilter, headers?: IncomingHttpHeaders): Promise<User[]> {
-    const {data: users} = await Axios.post<User[]>(`${this.URL + UserServiceRoutes.GET_ALL}`, filter, {headers});
-    return users;
+  static async getAll(filter: UserFilter, headers?: IncomingHttpHeaders): Promise<UserList> {
+    const {data: userList} = await Axios.post<UserList>(`${this.URL + UserServiceRoutes.GET_ALL}`, filter, {headers});
+    return userList;
   }
 
   static async save(data: ProcessUser): Promise<User> {
@@ -37,7 +37,7 @@ export class UserService {
     return user;
   }
 
-  static async changePassword(id: number, data: ChangePassword): Promise<User> {
+  static async changePassword(data: ChangePassword, id: number): Promise<User> {
     const {data: user} = await Axios.post<User>(`${this.URL + UserServiceRoutes.CHANGE_PASSWORD}/${id}`, data);
     return user;
   }

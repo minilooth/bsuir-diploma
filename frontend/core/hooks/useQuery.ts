@@ -8,7 +8,6 @@ export const useQuery = () => {
   const [pushQuery, setPushQuery] = React.useState(query);
 
   const appendToQuery = (items: object | object[]) => {
-    console.log(pushQuery)
     setPushQuery((prev) => QueryUtils.appendKeys(prev, items));
   }
 

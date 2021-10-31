@@ -6,16 +6,26 @@ import {
   createReducer,
   ThunkAction
 } from "@reduxjs/toolkit";
+import {createWrapper, HYDRATE} from "next-redux-wrapper";
 
 import {usersReducer} from "redux/slices/usersSlice";
 import {registerReducer} from "redux/slices/registerSlice";
 import {loginReducer} from "redux/slices/loginSlice";
-import {createWrapper, HYDRATE} from "next-redux-wrapper";
+import {vehiclesReducer} from "redux/slices/vehiclesSlice";
+import {catalogsReducer} from "redux/slices/catalogsSlice";
+import {modificationsReducer} from "redux/slices/modificationsSlice";
+import {manufacturersReducer} from "redux/slices/manufacturersSlice";
+import {storesReducer} from "redux/slices/storesSlice";
 
 const combinedReducers = combineReducers({
   users: usersReducer,
   register: registerReducer,
-  login: loginReducer
+  login: loginReducer,
+  vehicles: vehiclesReducer,
+  catalogs: catalogsReducer,
+  modifications: modificationsReducer,
+  manufacturers: manufacturersReducer,
+  stores: storesReducer
 })
 
 const rootReducer = createReducer(combinedReducers(undefined, {type: ""}), (builder) => {
@@ -33,7 +43,7 @@ const rootReducer = createReducer(combinedReducers(undefined, {type: ""}), (buil
 
 export const store = configureStore({
   reducer: rootReducer,
-  devTools: process.env.NODE_ENV !== 'production',
+  // devTools: process.env.NODE_ENV !== 'production',
 })
 
 const makeStore = () => store;
@@ -43,5 +53,5 @@ export type RootState = ReturnType<AppStore['getState']>
 export type AppDispatch = AppStore['dispatch'];
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
 
-export const wrapper = createWrapper<AppStore>(makeStore, {debug: true});
+export const wrapper = createWrapper<AppStore>(makeStore, {debug: false});
 

@@ -11,31 +11,41 @@ interface InputProps {
   className?: string;
   name?: string;
   error?: boolean;
+  value?: any;
   helperText?: string | React.ReactNode;
   inputProps?: Partial<StandardInputProps>;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  autoFocus?: boolean;
+  fullWidth?: boolean;
 }
 
-export const Input: React.FC<InputProps> = React.forwardRef<HTMLInputElement, InputProps>(({id, type = 'text', label, name, variant = 'standard', error, helperText, inputProps, placeholder, className, onChange, onBlur}, ref) => {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
+  const {id, type = 'text', label, variant = 'standard', fullWidth = true, placeholder, className, name, error, value,
+    helperText, inputProps, onChange, onBlur, onKeyDown, autoFocus} = props
   return (
     <TextField
-      className={className}
       inputRef={ref}
+      className={className}
+      name={name}
+      label={label}
+      fullWidth={fullWidth}
       id={id}
       type={type}
-      label={label}
       variant={variant}
       placeholder={placeholder}
-      name={name}
       error={error}
+      value={value}
       helperText={helperText}
-      fullWidth={true}
       InputProps={inputProps}
       onChange={onChange}
       onBlur={onBlur}
+      onKeyDown={onKeyDown}
+      autoFocus={autoFocus}
     />
   )
-})
+});
 
 Input.displayName = 'Input';
+

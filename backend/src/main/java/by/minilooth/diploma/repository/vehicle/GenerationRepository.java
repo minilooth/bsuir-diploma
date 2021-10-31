@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface GenerationRepository extends JpaRepository<Generation, Long> {
 
+    List<Generation> findAllByModelOrderByName(Model model);
     List<Generation> findAllByModel(Model model);
+    Boolean existsByModel(Model model);
+    boolean existsById(Long id);
 
 }

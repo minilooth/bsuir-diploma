@@ -24,9 +24,4 @@ public class Make extends AbstractEntity {
     @OneToMany(mappedBy = "make", cascade = CascadeType.ALL)
     private Set<Model> models = new HashSet<>();
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @OneToMany(mappedBy = "make", cascade = CascadeType.ALL)
-    private Set<Vehicle> vehicles = new HashSet<>();
-
 }

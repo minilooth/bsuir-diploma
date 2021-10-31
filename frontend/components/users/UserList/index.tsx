@@ -15,7 +15,7 @@ export const UserList: React.FC<UserListProps> = ({users, pages}) => {
     <Paper className="p-20 mt-40 mb-40">
       <UserListHeader/>
       <UserListContent users={users}/>
-      <Paginator pages={pages}/>
+      <Paginator pages={pages} className={"mt-20"}/>
     </Paper>
   );
 };

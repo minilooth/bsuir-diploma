@@ -30,9 +30,4 @@ public class Model extends AbstractEntity {
     @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
     private Set<Generation> generations = new HashSet<>();
 
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
-    private Set<Vehicle> vehicles = new HashSet<>();
-
 }

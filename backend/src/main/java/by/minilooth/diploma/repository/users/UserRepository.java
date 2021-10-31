@@ -25,8 +25,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(name = "User.findByEmail")
     Optional<User> findByEmail(String email);
 
+    @QueryHints(value = {
+            @QueryHint(name = org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH, value = "false")
+    }, forCounting = false)
+    @Query(name = "User.findById")
+    Optional<User> findById(Long id);
+
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+    Boolean existsByPhoneNumber(String phoneNumber);
 
     @QueryHints(value = {
             @QueryHint(name = org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH, value = "false")

@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface ModelRepository extends JpaRepository<Model, Long> {
 
+    List<Model> findAllByMakeOrderByName(Make make);
     List<Model> findAllByMake(Make make);
+    Boolean existsByMake(Make make);
+    boolean existsById(Long id);
 
 }

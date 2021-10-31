@@ -59,7 +59,8 @@ export const theme = createTheme({
     MuiTypography: {
       styleOverrides: {
         body1: {
-          fontSize: 12
+          fontSize: 14,
+          fontWeight: 400
         },
         h6: {
           fontSize: 12,
@@ -73,7 +74,14 @@ export const theme = createTheme({
           fontSize: 18,
           fontWeight: 600
         }
-      }
+      },
     },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        label: {
+          fontSize: 12
+        }
+      }
+    }
   }
 })

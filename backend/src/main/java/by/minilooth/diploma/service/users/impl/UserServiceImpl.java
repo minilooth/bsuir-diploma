@@ -8,6 +8,7 @@ import by.minilooth.diploma.exception.users.UserNotFoundException;
 import by.minilooth.diploma.models.ChangePassword;
 import by.minilooth.diploma.models.ProcessUser;
 import by.minilooth.diploma.models.UserFilter;
+import by.minilooth.diploma.models.UserList;
 import by.minilooth.diploma.models.bean.UserSort;
 import by.minilooth.diploma.models.bean.users.ConfirmationToken;
 import by.minilooth.diploma.models.enums.SortDirection;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import by.minilooth.diploma.models.bean.users.User;
 
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -60,6 +62,10 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistsException("Пользователь с таким E-mail уже существует");
         }
 
+        if (StringUtils.isEmpty(processUser.getPhoneNumber()) || existsByPhoneNumber(processUser.getPhoneNumber())) {
+            throw new UserAlreadyExistsException("Пользователь с таким номером телефона уже существует");
+        }
+
         String password = RandomStringUtils.randomAlphanumeric(AuthService.GENERATED_PASSWORD_LENGTH);
 
         User user = User.builder()
@@ -89,17 +95,22 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя"));
 
-        if (!user.getUsername().equals(processUser.getUsername()) && (StringUtils.isEmpty(processUser.getUsername()) ||
+        if (!StringUtils.equals(user.getUsername(), processUser.getUsername()) && (StringUtils.isEmpty(processUser.getUsername()) ||
                 existsByUsername(processUser.getUsername()))) {
             throw new UserAlreadyExistsException("Пользователь с таким именем пользователя уже существует");
         }
 
-        if (!user.getEmail().equals(processUser.getEmail()) && (StringUtils.isEmpty(processUser.getEmail()) ||
+        if (!StringUtils.equals(user.getEmail(), processUser.getEmail()) && (StringUtils.isEmpty(processUser.getEmail()) ||
                 existsByEmail(processUser.getEmail()))) {
             throw new UserAlreadyExistsException("Пользователь с таким E-mail уже существует");
         }
 
-        boolean emailChanged = !user.getEmail().equals(processUser.getEmail());
+        if (!StringUtils.equals(user.getPhoneNumber(), processUser.getPhoneNumber()) && (StringUtils.isEmpty(processUser.getPhoneNumber()) ||
+                existsByPhoneNumber(processUser.getPhoneNumber()))) {
+            throw new UserAlreadyExistsException("Пользователь с таким номером телефона уже существует");
+        }
+
+        boolean emailChanged = !StringUtils.equals(user.getEmail(), processUser.getEmail());
 
         user.setUsername(processUser.getUsername());
         user.setEmail(processUser.getEmail());
@@ -139,8 +150,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User lock(Long id) throws UserNotFoundException, ActionIsImpossibleException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя"));
+        User user = getById(id).orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя"));
         User me = authService.getPrincipal();
 
         if (user.getId().equals(me.getId())) {
@@ -157,7 +167,7 @@ public class UserServiceImpl implements UserService {
     public User changePassword(ChangePassword changePassword) throws PasswordsAreDifferentException, BadPasswordException {
         User me = authService.getPrincipal();
 
-        if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
+        if (!StringUtils.equals(changePassword.getNewPassword(), changePassword.getConfirmPassword())) {
             throw new PasswordsAreDifferentException("Пароли не совпадают");
         }
 
@@ -173,10 +183,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User changePassword(Long id, ChangePassword changePassword) throws UserNotFoundException, PasswordsAreDifferentException {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя"));
+        User user = getById(id).orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя"));
 
-        if (!changePassword.getNewPassword().equals(changePassword.getConfirmPassword())) {
+        if (!StringUtils.equals(changePassword.getNewPassword(), changePassword.getConfirmPassword())) {
             throw new PasswordsAreDifferentException("Пароли не совпадают");
         }
 
@@ -197,57 +206,69 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> getById(Long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
     public List<User> getAll() {
         return userRepository.findAll();
     }
 
     @Override
-    public List<User> getAll(UserFilter filter) {
+    public UserList getAll(UserFilter filter) {
         Integer page = filter.getPage();
         UserSort userSort = filter.getSort();
         SortDirection sortDirection = filter.getSortDirection();
 
         Comparator<User> comparator = getComparator(userSort, sortDirection);
 
-        Stream<User> users = userRepository.findAll().stream();
+        Stream<User> userStream = getAll().stream();
 
         if (Objects.nonNull(comparator)) {
-            users = users.sorted(comparator);
+            userStream = userStream.sorted(comparator);
         }
 
         String fullname = filter.getFullname();
         if (Objects.nonNull(fullname) && !fullname.isEmpty()) {
-            users = users.filter(u -> (u.getFirstname() + " " + u.getLastname()).startsWith(fullname));
+            userStream = userStream.filter(u -> (u.getFirstname() + " " + u.getLastname()).startsWith(fullname));
         }
 
         String email = filter.getEmail();
         if (Objects.nonNull(email) && !email.isEmpty()) {
-            users = users.filter(u -> Objects.nonNull(u.getEmail()) && u.getEmail().startsWith(email));
+            userStream = userStream.filter(u -> Objects.nonNull(u.getEmail()) && u.getEmail().startsWith(email));
         }
 
         String phoneNumber = filter.getPhoneNumber();
         if (Objects.nonNull(phoneNumber) && !phoneNumber.isEmpty()) {
-            users = users.filter(u -> Objects.nonNull(u.getPhoneNumber()) && u.getPhoneNumber().startsWith(phoneNumber));
+            userStream = userStream.filter(u -> Objects.nonNull(u.getPhoneNumber()) && u.getPhoneNumber().startsWith(phoneNumber));
         }
 
         Date registerDateFrom = filter.getRegisterDateFrom();
         if (Objects.nonNull(registerDateFrom)) {
-            users = users.filter(u -> u.getCreatedAt().after(registerDateFrom));
+            userStream = userStream.filter(u -> u.getCreatedAt().after(registerDateFrom));
         }
 
         Date registerDateTo = filter.getRegisterDateTo();
         if (Objects.nonNull(registerDateTo)) {
-            users = users.filter(u -> u.getCreatedAt().before(registerDateTo));
+            userStream = userStream.filter(u -> u.getCreatedAt().before(registerDateTo));
         }
 
         String search = filter.getSearch();
         if (Objects.nonNull(search) && !search.isEmpty()) {
-            users = users.filter(u -> u.getUsername().startsWith(search));
+            userStream = userStream.filter(u -> u.getUsername().startsWith(search));
         }
 
-        users = users.skip((Objects.nonNull(page) ? page - 1 : 0) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE);
+        List<User> users = userStream.collect(Collectors.toList());
+        Integer count = users.size();
 
-        return users.collect(Collectors.toList());
+        users = users.stream().skip((Objects.nonNull(page) ? page - 1 : 0) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
+                .collect(Collectors.toList());
+
+        return UserList.builder()
+                .users(users)
+                .pages((count % ITEMS_PER_PAGE == 0 ? (count / ITEMS_PER_PAGE) : ((count / ITEMS_PER_PAGE) + 1L)))
+                .build();
     }
 
     @Override
@@ -258,6 +279,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public Boolean existsByPhoneNumber(String phoneNumber) {
+        return userRepository.existsByPhoneNumber(phoneNumber);
     }
 
     @Override
@@ -296,7 +322,7 @@ public class UserServiceImpl implements UserService {
     private Comparator<User> getComparator(UserSort userSort, SortDirection sortDirection) {
         Comparator<User> comparator = getComparator(userSort);
 
-        if (Objects.nonNull(sortDirection)) {
+        if (Objects.nonNull(sortDirection) && Objects.nonNull(comparator)) {
             switch (sortDirection) {
                 case DESC:
                     return comparator.reversed();

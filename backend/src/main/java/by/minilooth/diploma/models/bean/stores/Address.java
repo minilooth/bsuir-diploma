@@ -15,7 +15,7 @@ import java.util.Set;
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Address extends AbstractEntity {
+public class Address extends AbstractEntity implements Comparable<Address> {
 
     @Column(name = "street", nullable = false)
     private String street;
@@ -51,4 +51,8 @@ public class Address extends AbstractEntity {
         return sb.toString();
     }
 
+    @Override
+    public int compareTo(Address o) {
+        return getFullAddress().compareTo(o.getFullAddress());
+    }
 }

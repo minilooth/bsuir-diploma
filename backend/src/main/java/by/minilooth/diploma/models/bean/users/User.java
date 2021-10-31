@@ -56,13 +56,16 @@ public class User extends AbstractEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> authorities = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinTable(name = "user_image",
             joinColumns =
                     { @JoinColumn(name = "user_id", referencedColumnName = "id") },
             inverseJoinColumns =
                     { @JoinColumn(name = "image_id", referencedColumnName = "id") })
     private Image avatar;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ConfirmationToken confirmationToken;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

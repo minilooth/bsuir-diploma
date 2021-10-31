@@ -36,14 +36,17 @@ export interface LoginData {
 
 export const LoginCard: React.FC = () => {
   const {enqueueSnackbar} = useSnackbar();
-  const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const {register, handleSubmit, control, formState: {errors}} = useForm({
+  const {register, handleSubmit, control, watch, formState: {errors, isSubmitting}} = useForm({
     mode: "onChange",
     resolver: yupResolver(LoginSchema)
   })
   const router = useRouter();
   const dispatch = useTypedDispatch();
+
+  const rememberMe = watch('rememberMe');
+
+  console.log(rememberMe);
 
   const handleClickShowPassword = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -51,7 +54,6 @@ export const LoginCard: React.FC = () => {
   }
 
   const onSubmit = async (data: LoginData) => {
-    setLoading(true);
     try {
       const {data: user} = await Axios.post<User | null>(AuthRoutes.LOGIN, data);
       await dispatch(setCurrentUser(user));
@@ -59,7 +61,6 @@ export const LoginCard: React.FC = () => {
     } catch (err) {
       enqueueSnackbar(getAxiosErrorData(err), SnackbarErrorOptions);
     }
-    setLoading(false);
   }
 
   return (
@@ -109,18 +110,17 @@ export const LoginCard: React.FC = () => {
           <FormControlLabel
             control={
               <CheckBox
-                name="rememberMe"
-                control={control}
+                {...register('rememberMe')}
               />
             }
-            label="Remember me"
+            label="Remember Me"
           />
           <Link href={"/restore-password"}>
             <a className="pointer hover-underline font-12">Forgot password ?</a>
           </Link>
         </Box>
-        <Button type="submit" variant="outlined" color="primary" className="w-200" disabled={loading}>
-          {loading ? <CircularProgress size={24} color="inherit"/> : "Log In"}
+        <Button type="submit" variant="outlined" color="primary" className="w-200" disabled={isSubmitting}>
+          {isSubmitting ? <CircularProgress size={24} color="inherit"/> : "Log In"}
         </Button>
       </Form>
       <Link href={"/register"}>

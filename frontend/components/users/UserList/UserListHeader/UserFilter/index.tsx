@@ -9,7 +9,7 @@ import {
   MenuItem,
   Typography
 } from "@mui/material";
-import {FilterAlt} from "@mui/icons-material";
+import {CloseOutlined, FilterAlt} from "@mui/icons-material";
 import {useForm} from "react-hook-form";
 import {Form} from "components/common/Form";
 import {SortItems, UserSort} from "types/user";
@@ -39,7 +39,7 @@ interface UserFilterData {
 
 export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
   const {values, appendToQuery, push} = useQuery();
-  const {register, handleSubmit, control, watch, formState: {errors}} = useForm({
+  const {register, handleSubmit, control, watch, formState: {errors}, reset} = useForm({
     mode: "onChange",
     defaultValues: {
       sort: values.sort ?? '',
@@ -54,10 +54,6 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
   })
 
   const sort = watch('sort');
-
-  const onCancel = () => {
-    onClose();
-  }
 
   const onSubmit = async (data: UserFilterData) => {
     const {sort: sortField, sortDirection, fullname, email, phoneNumber, registerDateFrom, registerDateTo} = data;
@@ -74,6 +70,18 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
     onClose();
   }
 
+  const onReset = () => {
+    reset({
+      sort: '',
+      sortDirection: '',
+      fullname: '',
+      email: '',
+      phoneNumber: '',
+      registerDateFrom: null,
+      registerDateTo: null
+    });
+  }
+
   return (
     <Dialog
       open={open}
@@ -81,10 +89,11 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
       fullWidth
       maxWidth="xs"
     >
-      <DialogTitle>
+      <DialogTitle className={"d-flex flex-row justify-between align-center"}>
         <Typography variant="h4" className="d-flex align-center">
           <FilterAlt fontSize="inherit" className="mr-10"/>Фильтр пользователей
         </Typography>
+        <CloseOutlined className="cu-p" onClick={onClose}/>
       </DialogTitle>
       <DialogContent>
         <Form className="d-flex flex-column align-center mt-20 mb-20" onSubmit={handleSubmit(onSubmit)}
@@ -177,7 +186,7 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
         </Form>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onCancel}>Отменить</Button>
+        <Button form={"filter-form"} onClick={onReset} color={"error"}>Очистить</Button>
         <Button form={"filter-form"} type={"submit"}>Применить</Button>
       </DialogActions>
     </Dialog>

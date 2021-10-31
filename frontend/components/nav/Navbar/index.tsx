@@ -16,10 +16,9 @@ interface Item {
 }
 
 const items: Item[] = [
-  {title: "Пользователи", key: "users", href: "/users"},
-  {title: "Автомобили", key: "vehicles", href: "/vehicles"},
-  {title: "Автосалоны", key: "autodealers", href: "/autodealers"},
-  {title: "Сделки", key: "deals", href: "/deals"}
+  {title: "Запчасти", key: "SPARE_PARTS", href: "/"},
+  {title: "Пользователи", key: "USERS", href: "/users"},
+  {title: "Склады и магазины", key: "STORES_AND_SHOPS", href: "/stores"},
 ]
 
 export const NavBar: React.FC = () => {
@@ -28,11 +27,11 @@ export const NavBar: React.FC = () => {
       <MainContainer>
         <Box component="div" className="d-flex flex-row justify-between align-center">
           <Box component="div" className="d-flex align-center">
-            <Link href='/'>
-              <a className={styles.home}>
-                <Home/>
-              </a>
-            </Link>
+            {/*<Link href='/'>*/}
+            {/*  <a className={styles.home}>*/}
+            {/*    <Home/>*/}
+            {/*  </a>*/}
+            {/*</Link>*/}
             {items.map(({title, key, href}) => (
               <AnimatedLink href={href} title={title} key={key}/>
             ))}

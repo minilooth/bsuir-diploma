@@ -2,12 +2,14 @@ import React from 'react';
 import {Box, Pagination} from "@mui/material";
 import {useRouter} from "next/router";
 import {QueryUtils} from "utils/QueryUtils";
+import clsx from "clsx";
 
 interface PaginatorProps {
   pages: number;
+  className?: string;
 }
 
-export const Paginator: React.FC<PaginatorProps> = ({pages}) => {
+export const Paginator: React.FC<PaginatorProps> = ({pages, className}) => {
   const router = useRouter();
   const {query, pathname} = router;
 
@@ -23,7 +25,7 @@ export const Paginator: React.FC<PaginatorProps> = ({pages}) => {
   }
 
   return (
-    <Box className="d-flex justify-center mt-20">
+    <Box className={clsx("d-flex justify-center", className)}>
       <Pagination count={pages} shape="rounded" onChange={onPaginationChange} page={Number(page)}/>
     </Box>
   );
