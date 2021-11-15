@@ -11,19 +11,26 @@ import {getMakes} from "redux/slices/vehiclesSlice";
 import {getCategories} from "redux/slices/catalogsSlice";
 import {getManufacturers} from "redux/slices/manufacturersSlice";
 import {getModifications} from "redux/slices/modificationsSlice";
+import {getSpareParts, selectPages, selectSpareParts} from "redux/slices/sparePartsSlice";
+import {SparePartList} from "components/parts/SparePartList";
+import {useTypedSelector} from "redux/hooks";
 
 const Home: NextPage = () => {
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  // const [dialogOpen, setDialogOpen] = React.useState(false);
+  //
+  // const toggleDialog = () => {
+  //   setDialogOpen((prev) => !prev);
+  // }
 
-  const toggleDialog = () => {
-    setDialogOpen((prev) => !prev);
-  }
+  const spareParts = useTypedSelector(selectSpareParts);
+  const pages = useTypedSelector(selectPages);
 
   return (
     <AuthenticatedLayout title={'Main'}>
       <MainContainer>
-        <Button onClick={toggleDialog}>OPEN</Button>
-        <PartsSettingsDialog open={dialogOpen} onClose={toggleDialog}/>
+        <SparePartList spareParts={spareParts} pages={pages}/>
+        {/*<Button onClick={toggleDialog}>OPEN</Button>*/}
+        {/*<PartsSettingsDialog open={dialogOpen} onClose={toggleDialog}/>*/}
       </MainContainer>
     </AuthenticatedLayout>
   )
@@ -35,6 +42,7 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => withAuth
   await store.dispatch(getCategories(headers));
   await store.dispatch(getManufacturers(headers));
   await store.dispatch(getModifications(headers));
+  await store.dispatch(getSpareParts({query, headers}));
   return {
     props: {}
   }

@@ -1,12 +1,13 @@
 import {ProcessSubcategory, Subcategory} from "types/spareparts/catalog/subcategory";
 import {Axios} from "core/axios";
+import {IncomingHttpHeaders} from "http";
 
 export class SubcategoryService {
 
   private static readonly URL = '/subcategory';
 
-  static async getAll(id: number): Promise<Subcategory[]> {
-    const {data: subcategories} = await Axios.get<Subcategory[]>(`${this.URL}/${id}`);
+  static async getAll(id: number, headers?: IncomingHttpHeaders): Promise<Subcategory[]> {
+    const {data: subcategories} = await Axios.get<Subcategory[]>(`${this.URL}/${id}`, {headers});
     return subcategories;
   }
 

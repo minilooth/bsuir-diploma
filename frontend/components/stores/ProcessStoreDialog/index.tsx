@@ -5,12 +5,21 @@ import {
   CircularProgress,
   Dialog, DialogActions,
   DialogContent,
-  DialogTitle,
+  DialogTitle, IconButton,
   InputAdornment, MenuItem,
   Stack,
   Typography
 } from "@mui/material";
-import {CloseOutlined, Store as StoreIcon} from "@mui/icons-material";
+import {
+  Add, AddOutlined,
+  Backup,
+  BackupOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  Save, SaveOutlined,
+  Store as StoreIcon,
+  Undo, UndoOutlined
+} from "@mui/icons-material";
 import clsx from "clsx";
 import NextImage from "next/image";
 
@@ -32,6 +41,9 @@ import {getStores} from "redux/slices/storesSlice";
 import { getStoreImageUrl } from 'utils/functions/getStoreImageUrl';
 
 import styles from "components/stores/ProcessStoreDialog/ProcessStoreDialog.module.scss";
+import {yupResolver} from "@hookform/resolvers/yup";
+import {StoreSchema} from "schemas/store";
+import {LoadingButton} from "@mui/lab";
 
 interface ProcessStoreDialogProps {
   open: boolean;
@@ -47,7 +59,7 @@ interface ProcessStoreFormData {
 }
 
 export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onClose, store}) => {
-  const [loader, setLoader] = React.useState(false)
+  const [isImageUploading, setIsImageUploading] = React.useState(false)
   const {enqueueSnackbar} = useSnackbar();
   const dispatch = useTypedDispatch();
   const addresses = useTypedSelector(selectAddresses);
@@ -60,19 +72,20 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
       address: store?.address.id ?? '',
       name: store?.name ?? ''
     },
+    resolver: yupResolver(StoreSchema)
   })
 
   const image = watch("image");
 
-  const toggleLoader = () => {
-    setLoader((prev) => !prev);
+  const toggleUploadLoader = () => {
+    setIsImageUploading((prev) => !prev);
   }
 
   const onAvatarChanged = async (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
 
     if (files && files.length) {
-      toggleLoader();
+      toggleUploadLoader();
 
       const formData = new FormData();
       const file = files[0];
@@ -85,13 +98,13 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
         enqueueSnackbar(getAxiosErrorData(err), SnackbarErrorOptions);
       }
 
-      toggleLoader();
+      toggleUploadLoader();
     }
   }
 
   const onSubmit = async (form: ProcessStoreFormData) => {
     const {type, address, ...other} = form;
-    const founded = addresses.find(a => a.id === address);
+    const founded = addresses.find(a => a.id === Number(address));
 
     if (!founded) {
         enqueueSnackbar('Не удалось найти адрес', SnackbarErrorOptions);
@@ -138,7 +151,7 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
       fullWidth
       maxWidth="sm"
       open={open}
-      disableEscapeKeyDown={loader || isSubmitting}
+      disableEscapeKeyDown={isImageUploading || isSubmitting}
       onClose={onClose}
     >
       <DialogTitle className="d-flex justify-between align-center">
@@ -146,31 +159,50 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
           <StoreIcon fontSize="inherit" className="mr-10"/>
           {store ? 'Редактирование магазина / склада' : 'Добавление магазина / склада'}
         </Typography>
-        {!loader && !isSubmitting && <CloseOutlined className="cu-p" onClick={onClose}/>}
+        <IconButton
+          onClick={onClose}
+          disabled={isImageUploading || isSubmitting}
+          size={"small"}
+        >
+          <CloseOutlined htmlColor="#000000"/>
+        </IconButton>
       </DialogTitle>
       <DialogContent>
-        <Stack direction={"row"} className={"align-center"} spacing={2}>
-          <Box className={clsx("d-flex flex-column justify-center", styles.imageContainer)}>
+        <Stack direction={"row"} spacing={2}>
+          <Box className={clsx("d-flex flex-column justify-center wp-100")}>
             <Box className={clsx("d-flex justify-center", styles.imageWrapper)}>
               <NextImage src={getStoreImageUrl(image)} alt={'Магазин'} layout="fill" objectFit="cover"/>
             </Box>
-            <Box className="d-flex justify-center mt-10">
+            <Stack direction={"row"} spacing={1} className="justify-center mt-10">
               <input accept="image/*" type={"file"} id="file-input" hidden onChange={onAvatarChanged}/>
               <label htmlFor="file-input">
-                <Button component="span" disabled={loader || isSubmitting}>
-                  {loader ? <CircularProgress size={24} color="inherit"/> : "Выбрать"}
-                </Button>
+                <LoadingButton
+                  component="span"
+                  variant="outlined"
+                  startIcon={<BackupOutlined/>}
+                  size={"small"}
+                  loading={isImageUploading}
+                  loadingPosition={"start"}
+                  disabled={isSubmitting}
+                >Загрузить</LoadingButton>
               </label>
               {image && (
-                <Button component="span" color={"error"} disabled={loader || isSubmitting}
-                        onClick={onDeleteAvatar}>
+                <Button
+                  component="span"
+                  color={"error"}
+                  disabled={isImageUploading || isSubmitting}
+                  onClick={onDeleteAvatar}
+                  variant={"outlined"}
+                  startIcon={<DeleteOutlined/>}
+                  size={"small"}
+                >
                   Удалить
                 </Button>
               )}
-            </Box>
+            </Stack>
           </Box>
-          <Box className={clsx(styles.formContainer)}>
-            <Form className="d-flex flex-column align-center mt-20 mb-20" onSubmit={handleSubmit(onSubmit)}
+          <Box className={"wp-100"}>
+            <Form className="d-flex flex-column align-center" onSubmit={handleSubmit(onSubmit)}
                   id="process-form">
               <Input
                 {...register('name')}
@@ -197,33 +229,56 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
                   <MenuItem value={key} key={index}>{label}</MenuItem>
                 )}
               </Dropdown>
-              <Dropdown
-                name={'address'}
-                control={control}
-                label={"Адрес"}
-                defaultValue={''}
-                className={"mb-10"}
-                displayEmpty={true}
-                startAdornment={<InputAdornment position={"start"}/>}
-                error={!!errors.address}
-                helperText={errors?.address?.message}
-              >
-                <MenuItem value={''}>Выберите...</MenuItem>
-                {addresses.map(({id, full}, index) =>
-                  <MenuItem value={id} key={index}>{full}</MenuItem>
-                )}
-              </Dropdown>
+              <Stack direction="row" spacing={1} className="align-center wp-100">
+                <Dropdown
+                  name={'address'}
+                  control={control}
+                  label={"Адрес"}
+                  defaultValue={''}
+                  className={"mb-10"}
+                  displayEmpty={true}
+                  startAdornment={<InputAdornment position={"start"}/>}
+                  error={!!errors.address}
+                  helperText={errors?.address?.message}
+                >
+                  <MenuItem value={''}>Выберите...</MenuItem>
+                  {addresses.map(({id, full}, index) =>
+                    <MenuItem value={id} key={index}>{full}</MenuItem>
+                  )}
+                </Dropdown>
+                <IconButton
+                  component={"span"}
+                  size={"small"}
+                >
+                  <AddOutlined/>
+                </IconButton>
+              </Stack>
             </Form>
           </Box>
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button disabled={loader || isSubmitting} form={"process-form"} color={"error"} onClick={onReset}>
+        <Button
+          disabled={isImageUploading || isSubmitting}
+          form={"process-form"}
+          color={"error"}
+          variant={"outlined"}
+          startIcon={<UndoOutlined/>}
+          onClick={onReset}
+          size={"small"}
+        >
           Очистить
         </Button>
-        <Button disabled={loader || isSubmitting} form={"process-form"} type={"submit"}>
-          {isSubmitting ? <CircularProgress size={24} color="inherit"/> : "Сохранить"}
-        </Button>
+        <LoadingButton
+          form={"process-form"}
+          type={"submit"}
+          variant={"outlined"}
+          startIcon={<SaveOutlined/>}
+          size={"small"}
+          loading={isSubmitting}
+          disabled={isImageUploading}
+          loadingPosition={"start"}
+        >Сохранить</LoadingButton>
       </DialogActions>
     </Dialog>
   );

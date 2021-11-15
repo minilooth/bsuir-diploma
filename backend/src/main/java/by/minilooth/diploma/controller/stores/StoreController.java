@@ -16,11 +16,14 @@ import by.minilooth.diploma.models.stores.StoreList;
 import by.minilooth.diploma.service.stores.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 
 @RequestMapping("/api/store")
 @RestController
+@Validated
 public class StoreController {
 
     @Autowired private StoreService storeService;
@@ -38,7 +41,7 @@ public class StoreController {
     }
 
     @PutMapping
-    public ResponseEntity<?> add(@RequestBody ProcessStoreDto processStoreDto) {
+    public ResponseEntity<?> add(@RequestBody @Valid ProcessStoreDto processStoreDto) {
         ProcessStore processStore = processStoreMapper.toEntity(processStoreDto);
         Store store = storeService.save(processStore);
         StoreDto storeDto = storeMapper.toDto(store);
@@ -46,7 +49,7 @@ public class StoreController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestBody ProcessStoreDto processStoreDto, @PathVariable("id") Long id)
+    public ResponseEntity<?> update(@RequestBody @Valid ProcessStoreDto processStoreDto, @PathVariable("id") Long id)
             throws StoreNotFoundException {
         ProcessStore processStore = processStoreMapper.toEntity(processStoreDto);
         Store store = storeService.update(processStore, id);

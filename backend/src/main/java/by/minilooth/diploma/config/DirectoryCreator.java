@@ -20,8 +20,12 @@ public class DirectoryCreator {
     @PostConstruct
     private void createDirectories() throws IOException {
         if (Files.notExists(Path.of(IMAGES_DIRECTORY), LinkOption.NOFOLLOW_LINKS)) {
+            LOGGER.info("Directory {} not found. Creating new directory...", IMAGES_DIRECTORY);
             Files.createDirectory(Path.of(IMAGES_DIRECTORY));
             LOGGER.info("Created new directory: {}", IMAGES_DIRECTORY);
+        }
+        else {
+            LOGGER.info("Found directory: {}", IMAGES_DIRECTORY);
         }
     }
 

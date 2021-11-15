@@ -2,10 +2,7 @@ package by.minilooth.diploma.models.bean.spareparts;
 
 import by.minilooth.diploma.models.api.BaseEntity;
 import by.minilooth.diploma.models.bean.keys.CharacteristicKey;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -15,18 +12,20 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Data
 @Builder
+@EqualsAndHashCode
 public class Characteristic implements BaseEntity {
 
     @EmbeddedId
+    @EqualsAndHashCode.Exclude
     private CharacteristicKey id;
 
     @ManyToOne
-    @MapsId("sparePart")
+    @MapsId("sparePartId")
     @JoinColumn(name = "spare_part_id", nullable = false)
     private SparePart sparePart;
 
     @ManyToOne
-    @MapsId("modification")
+    @MapsId("modificationId")
     @JoinColumn(name = "modification_id", nullable = false)
     private Modification modification;
 

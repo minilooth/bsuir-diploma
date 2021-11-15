@@ -1,0 +1,37 @@
+app.production=false
+
+# Datasource
+
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.open-in-view=false
+
+# logging.file.name=logs.log
+
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.MySQL5InnoDBDialect
+
+# Security
+
+security.tokenSecret=
+security.tokenExpirationInMs=
+security.tokenIssuer=
+
+spring.security.filter.order=10
+
+# Responses
+
+server.error.include-message=always
+server.error.include-binding-errors=always
+
+# Mail
+spring.mail.host=
+spring.mail.port=
+spring.mail.username=
+spring.mail.password=
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+

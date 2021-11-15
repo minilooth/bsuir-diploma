@@ -5,7 +5,7 @@ import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.repository.common.ImageRepository;
 import by.minilooth.diploma.service.common.FileService;
 import by.minilooth.diploma.service.common.ImageService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,11 +17,10 @@ import java.util.Optional;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    private final FileService fileService;
-    private final ImageRepository imageRepository;
+    @Autowired private FileService fileService;
+    @Autowired private ImageRepository imageRepository;
 
     @Override
     public void save(Image image) {

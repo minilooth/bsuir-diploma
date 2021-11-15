@@ -1,12 +1,13 @@
 import {Model, ProcessModel} from "types/spareparts/vehicle/model";
 import {Axios} from "core/axios";
+import {IncomingHttpHeaders} from "http";
 
 export class ModelService {
 
   private static readonly URL = '/model';
 
-  static async getAll(makeId: number | string): Promise<Model[]> {
-    const {data: models} = await Axios.get<Model[]>(`${this.URL}/${makeId}`);
+  static async getAll(makeId: number | string, headers?: IncomingHttpHeaders): Promise<Model[]> {
+    const {data: models} = await Axios.get<Model[]>(`${this.URL}/${makeId}`, {headers});
     return models;
   }
 

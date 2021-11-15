@@ -3,10 +3,7 @@ package by.minilooth.diploma.models.bean.stores;
 import by.minilooth.diploma.models.api.BaseEntity;
 import by.minilooth.diploma.models.bean.spareparts.SparePart;
 import by.minilooth.diploma.models.bean.keys.AvailabilityKey;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -16,23 +13,28 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Data
-public class Availability implements BaseEntity {
+@EqualsAndHashCode
+public class Availability implements BaseEntity, Comparable<Availability> {
 
     @EmbeddedId
+    @EqualsAndHashCode.Exclude
     private AvailabilityKey id;
 
-    @ManyToOne
-    @MapsId("store")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @MapsId("storeId")
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @ManyToOne
-    @MapsId("sparePart")
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @MapsId("sparePartId")
     @JoinColumn(name = "spare_part_id", nullable = false)
     private SparePart sparePart;
 
     @Column(name = "quantity", nullable = false)
-    @Builder.Default
-    private Integer quantity = 0;
+    private Long quantity;
 
+    @Override
+    public int compareTo(Availability o) {
+        return 0;
+    }
 }

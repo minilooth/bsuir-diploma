@@ -13,7 +13,7 @@ import java.util.Set;
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Manufacturer extends AbstractEntity {
+public class Manufacturer extends AbstractEntity implements Comparable<Manufacturer> {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -22,5 +22,10 @@ public class Manufacturer extends AbstractEntity {
     @ToString.Exclude
     @OneToMany(mappedBy = "manufacturer", cascade = CascadeType.ALL)
     private Set<SparePart> spareParts;
+
+    @Override
+    public int compareTo(Manufacturer o) {
+        return o.getName().compareTo(name);
+    }
 
 }

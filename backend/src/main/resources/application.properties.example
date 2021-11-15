@@ -1,3 +1,5 @@
+app.production=true
+
 # Datasource
 
 spring.datasource.url=

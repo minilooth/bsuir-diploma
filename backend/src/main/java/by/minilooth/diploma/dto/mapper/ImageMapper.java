@@ -1,7 +1,7 @@
 package by.minilooth.diploma.dto.mapper;
 
 import by.minilooth.diploma.config.consts.ApiConsts;
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.ImageDto;
 import by.minilooth.diploma.models.bean.common.Image;
 import org.springframework.stereotype.Component;

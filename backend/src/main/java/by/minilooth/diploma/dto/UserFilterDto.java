@@ -1,8 +1,8 @@
 package by.minilooth.diploma.dto;
 
+import by.minilooth.diploma.common.api.AbstractFilter;
 import by.minilooth.diploma.dto.api.BaseDto;
-import by.minilooth.diploma.models.api.AbstractFilter;
-import by.minilooth.diploma.models.bean.UserSort;
+import by.minilooth.diploma.common.enums.UserSort;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

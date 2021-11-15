@@ -26,12 +26,12 @@ public abstract class AbstractEntity implements Serializable, BaseEntity {
 
     @PrePersist
     public void toCreate() {
-        setCreatedAt(new Date());
+        createdAt = new Date();
     }
 
     @PreUpdate
     public void toUpdate() {
-        setUpdatedAt(new Date());
+        updatedAt = new Date();
     }
 
 }

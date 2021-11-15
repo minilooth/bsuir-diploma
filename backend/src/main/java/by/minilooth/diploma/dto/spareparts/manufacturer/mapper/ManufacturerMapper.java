@@ -1,6 +1,6 @@
 package by.minilooth.diploma.dto.spareparts.manufacturer.mapper;
 
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.spareparts.manufacturer.ManufacturerDto;
 import by.minilooth.diploma.models.bean.spareparts.Manufacturer;
 import org.springframework.stereotype.Component;

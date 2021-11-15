@@ -1,12 +1,13 @@
 import {Generation, ProcessGeneration} from "types/spareparts/vehicle/generation";
 import {Axios} from "core/axios";
+import {IncomingHttpHeaders} from "http";
 
 export class GenerationService {
 
   private static readonly URL = '/generation';
 
-  static async getAll(modelId: number | string): Promise<Generation[]> {
-    const {data: generations} = await Axios.get<Generation[]>(`${this.URL}/${modelId}`);
+  static async getAll(modelId: number | string, headers?: IncomingHttpHeaders): Promise<Generation[]> {
+    const {data: generations} = await Axios.get<Generation[]>(`${this.URL}/${modelId}`, {headers});
     return generations;
   }
 

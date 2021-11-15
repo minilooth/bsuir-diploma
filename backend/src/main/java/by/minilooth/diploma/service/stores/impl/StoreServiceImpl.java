@@ -1,27 +1,23 @@
 package by.minilooth.diploma.service.stores.impl;
 
 import by.minilooth.diploma.exception.stores.StoreNotFoundException;
-import by.minilooth.diploma.models.bean.StoreSort;
-import by.minilooth.diploma.models.bean.UserSort;
+import by.minilooth.diploma.common.enums.StoreSort;
 import by.minilooth.diploma.models.bean.stores.Address;
+import by.minilooth.diploma.models.bean.stores.Availability;
 import by.minilooth.diploma.models.bean.stores.Store;
-import by.minilooth.diploma.models.bean.users.User;
-import by.minilooth.diploma.models.enums.SortDirection;
-import by.minilooth.diploma.models.enums.StoreType;
+import by.minilooth.diploma.common.enums.SortDirection;
+import by.minilooth.diploma.common.enums.StoreType;
 import by.minilooth.diploma.models.stores.ProcessStore;
 import by.minilooth.diploma.models.stores.StoreFilter;
 import by.minilooth.diploma.models.stores.StoreList;
 import by.minilooth.diploma.repository.stores.StoreRepository;
+import by.minilooth.diploma.service.spareparts.SparePartService;
 import by.minilooth.diploma.service.stores.StoreService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,9 +25,8 @@ import java.util.stream.Stream;
 @Service
 public class StoreServiceImpl implements StoreService {
 
-    private final static Long ITEMS_PER_PAGE = 9L;
-
     @Autowired private StoreRepository storeRepository;
+    @Autowired private SparePartService sparePartService;
 
     @Override
     public void save(Store store) {
@@ -40,11 +35,18 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store save(ProcessStore processStore) {
+        Set<Availability> spareParts = sparePartService.getAll().stream().map(p -> Availability.builder()
+                .sparePart(p)
+                .quantity(0L)
+                .build()
+        ).collect(Collectors.toSet());
+
         Store store = Store.builder()
                 .name(processStore.getName())
                 .type(processStore.getType())
                 .address(processStore.getAddress())
                 .image(processStore.getImage())
+                .availabilities(spareParts)
                 .build();
         save(store);
         return store;
@@ -120,10 +122,15 @@ public class StoreServiceImpl implements StoreService {
         stores = stores.stream().skip((Objects.nonNull(page) ? page - 1 : 0) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
                 .collect(Collectors.toList());
 
-        return StoreList.builder()
+        StoreList storeList = StoreList.builder()
                 .stores(stores)
-                .pages(count == 0 ? 1 : (count % ITEMS_PER_PAGE == 0 ? (count / ITEMS_PER_PAGE) : ((count / ITEMS_PER_PAGE) + 1L)))
                 .build();
+
+        storeList.setPages(count == 0 ? 1 : (count % ITEMS_PER_PAGE == 0
+                ? (count / ITEMS_PER_PAGE)
+                : ((count / ITEMS_PER_PAGE) + 1L)));
+
+        return storeList;
     }
 
     private Comparator<Store> getComparator(StoreSort storeSort) {

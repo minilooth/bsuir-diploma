@@ -2,7 +2,7 @@ package by.minilooth.diploma.dto.stores;
 
 import by.minilooth.diploma.dto.ImageDto;
 import by.minilooth.diploma.dto.api.AbstractDto;
-import by.minilooth.diploma.models.enums.StoreType;
+import by.minilooth.diploma.common.enums.StoreType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

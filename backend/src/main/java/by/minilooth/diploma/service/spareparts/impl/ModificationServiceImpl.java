@@ -7,11 +7,11 @@ import by.minilooth.diploma.models.spareparts.characteristic.ProcessModification
 import by.minilooth.diploma.repository.spareparts.ModificationRepository;
 import by.minilooth.diploma.service.spareparts.ModificationService;
 import by.minilooth.diploma.service.spareparts.SparePartService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,5 +71,10 @@ public class ModificationServiceImpl implements ModificationService {
     @Override
     public List<Modification> getAll() {
         return modificationRepository.findAll();
+    }
+
+    @Override
+    public List<Modification> getAllByIds(Collection<Long> ids) {
+        return modificationRepository.findAllByIdIn(ids);
     }
 }

@@ -1,6 +1,6 @@
 package by.minilooth.diploma.dto.stores.mapper;
 
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.stores.AddressDto;
 import by.minilooth.diploma.models.bean.stores.Address;
 import org.springframework.stereotype.Component;

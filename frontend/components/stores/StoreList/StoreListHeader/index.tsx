@@ -1,6 +1,6 @@
 import React, {ChangeEvent} from 'react';
 import {Box, Button, Chip, InputAdornment, Stack, Typography} from "@mui/material";
-import {Search, Store} from "@mui/icons-material";
+import {Search, Store, Settings} from "@mui/icons-material";
 import {Input} from "components/common/Input";
 import debounce from "debounce";
 import {useQuery} from "core/hooks/useQuery";
@@ -10,8 +10,8 @@ import {StoreSortItems, StoreType, StoreTypes} from "types/stores/store";
 import {useTypedSelector} from "redux/hooks";
 import {selectAddresses} from "redux/slices/storesSlice";
 import {StoreFilter} from "components/stores/StoreList/StoreListHeader/StoreFilter";
-import {ProcessUserDialog} from "components/users/ProcessUserDialog";
 import {ProcessStoreDialog} from "components/stores/ProcessStoreDialog";
+import {AddressesDialog} from "components/stores/AddressesDialog";
 
 enum DialogType {
   FILTER,
@@ -91,7 +91,9 @@ export const StoreListHeader = () => {
     <>
       <Stack direction="row" className="justify-between align-center">
         <Typography variant="h4" className="d-flex align-center">
-          <Store fontSize="inherit" className="mr-10"/>Склады и магазины
+          <Store fontSize="inherit" className="mr-10"/>
+          Склады и магазины
+          <Settings fontSize="inherit" className="ml-10 cu-p" onClick={() => toggleDialog(DialogType.SETTINGS)}/>
         </Typography>
         <Box>
           <Input
@@ -145,6 +147,12 @@ export const StoreListHeader = () => {
           onClose={() => toggleDialog(DialogType.PROCESS)}
         />
       )}
+      {dialogState.settings &&
+        <AddressesDialog
+          open={dialogState.settings}
+          onClose={() => toggleDialog(DialogType.SETTINGS)}
+        />
+      }
     </>
   );
 };

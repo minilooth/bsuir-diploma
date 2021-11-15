@@ -16,6 +16,8 @@ import java.util.Optional;
 
 public interface UserService {
 
+    Long ITEMS_PER_PAGE = 9L;
+
     void save(User user);
     User save(ProcessUser processUser) throws UserAlreadyExistsException;
     User update(ProcessUser processUser, Long id) throws UserAlreadyExistsException, UserNotFoundException;

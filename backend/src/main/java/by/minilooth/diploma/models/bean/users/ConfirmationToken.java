@@ -1,9 +1,7 @@
 package by.minilooth.diploma.models.bean.users;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -12,6 +10,8 @@ import java.util.UUID;
 @Data
 @Table(name = "confirmation_token")
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @EqualsAndHashCode(callSuper = false)
 public class ConfirmationToken extends AbstractEntity {
 

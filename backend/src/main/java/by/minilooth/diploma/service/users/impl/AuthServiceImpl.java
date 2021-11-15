@@ -12,7 +12,6 @@ import by.minilooth.diploma.service.users.AuthService;
 import by.minilooth.diploma.service.users.ConfirmationTokenService;
 import by.minilooth.diploma.service.users.RoleService;
 import by.minilooth.diploma.service.users.UserService;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +31,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -111,6 +112,10 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("User with provided e-mail is already exists");
         }
 
+        if (StringUtils.isEmpty(params.getPhoneNumber()) || userService.existsByPhoneNumber(params.getPhoneNumber())) {
+            throw new UserAlreadyExistsException("User with provided phone number is already exists");
+        }
+
         String password = RandomStringUtils.randomAlphanumeric(GENERATED_PASSWORD_LENGTH);
 
         User user = User.builder()
@@ -122,10 +127,13 @@ public class AuthServiceImpl implements AuthService {
 
         userService.save(user);
 
-        ConfirmationToken confirmationToken = new ConfirmationToken(user);
-        confirmationTokenService.save(confirmationToken);
+        ConfirmationToken token = ConfirmationToken.builder()
+                .user(user)
+                .token(UUID.randomUUID().toString())
+                .build();
 
-        mailService.sendConfirmRegisterMain(user, password, confirmationToken);
+        confirmationTokenService.save(token);
+        mailService.sendConfirmRegisterMain(user, password, token);
 
         return user;
     }
@@ -151,6 +159,11 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Boolean isEmailBusy(String email) {
         return userService.existsByEmail(email);
+    }
+
+    @Override
+    public Boolean isPhoneNumberBusy(String phoneNumber) {
+        return userService.existsByPhoneNumber(phoneNumber);
     }
 
     @Override

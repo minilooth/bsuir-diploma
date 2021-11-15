@@ -1,12 +1,13 @@
 import {Group, ProcessGroup} from "types/spareparts/catalog/group";
 import {Axios} from "core/axios";
+import {IncomingHttpHeaders} from "http";
 
 export class GroupService {
 
   private static readonly URL = '/group';
 
-  static async getAll(subcategoryId: number): Promise<Group[]> {
-    const {data: groups} = await Axios.get<Group[]>(`${this.URL}/${subcategoryId}`);
+  static async getAll(subcategoryId: number, headers?: IncomingHttpHeaders): Promise<Group[]> {
+    const {data: groups} = await Axios.get<Group[]>(`${this.URL}/${subcategoryId}`, {headers});
     return groups;
   }
 

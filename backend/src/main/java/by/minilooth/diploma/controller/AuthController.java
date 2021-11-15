@@ -16,6 +16,7 @@ import by.minilooth.diploma.models.RestorePasswordParams;
 import by.minilooth.diploma.models.bean.users.User;
 import by.minilooth.diploma.service.users.AuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -26,15 +27,14 @@ import javax.validation.Valid;
 
 @RequestMapping("/api/auth")
 @RestController
-@RequiredArgsConstructor
 @Validated
 public class AuthController {
 
-    private final AuthService authService;
-    private final UserMapper userMapper;
-    private final LoginParamsMapper loginParamsMapper;
-    private final RegisterParamsMapper registerParamsMapper;
-    private final RestorePasswordParamsMapper restorePasswordParamsMapper;
+    @Autowired private AuthService authService;
+    @Autowired private UserMapper userMapper;
+    @Autowired private LoginParamsMapper loginParamsMapper;
+    @Autowired private RegisterParamsMapper registerParamsMapper;
+    @Autowired private RestorePasswordParamsMapper restorePasswordParamsMapper;
 
     @GetMapping("/is-logged-in")
     public ResponseEntity<?> isLoggedIn() {
@@ -50,7 +50,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginParamsDto loginParamsDto, HttpServletResponse res) {
+    public ResponseEntity<?> login(@RequestBody @Valid LoginParamsDto loginParamsDto, HttpServletResponse res) {
         LoginParams loginParams = loginParamsMapper.toEntity(loginParamsDto);
         User user = authService.authorize(loginParams, res);
         UserDto userDto = userMapper.toDto(user);
@@ -66,7 +66,7 @@ public class AuthController {
     }
 
     @PostMapping("/restore-password")
-    public ResponseEntity<?> restorePassword(@RequestBody RestorePasswordParamsDto restorePasswordParamsDto) throws UserNotFoundException {
+    public ResponseEntity<?> restorePassword(@RequestBody @Valid RestorePasswordParamsDto restorePasswordParamsDto) throws UserNotFoundException {
         RestorePasswordParams restorePasswordParams = restorePasswordParamsMapper.toEntity(restorePasswordParamsDto);
         authService.restorePassword(restorePasswordParams);
         return ResponseEntity.ok().build();
@@ -81,6 +81,12 @@ public class AuthController {
     @GetMapping("/is-email-busy")
     public ResponseEntity<?> isEmailBusy(@RequestParam("email") String email) {
         Boolean isBusy = authService.isEmailBusy(email);
+        return ResponseEntity.ok(isBusy);
+    }
+
+    @GetMapping("/is-phone-number-busy")
+    public ResponseEntity<?> isPhoneNumberBusy(@RequestParam("phoneNumber") String phoneNumber) {
+        Boolean isBusy = authService.isPhoneNumberBusy(phoneNumber);
         return ResponseEntity.ok(isBusy);
     }
 

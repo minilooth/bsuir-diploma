@@ -1,6 +1,6 @@
 package by.minilooth.diploma.dto.spareparts.catalog.mapper;
 
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.spareparts.catalog.ProcessGroupDto;
 import by.minilooth.diploma.models.spareparts.catalog.ProcessGroup;
 import org.springframework.beans.factory.annotation.Autowired;

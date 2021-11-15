@@ -11,14 +11,15 @@ import by.minilooth.diploma.models.stores.ProcessAddress;
 import by.minilooth.diploma.service.stores.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/address")
+@Validated
 public class AddressController {
 
     @Autowired private AddressService addressService;
@@ -26,7 +27,7 @@ public class AddressController {
     @Autowired private ProcessAddressMapper processAddressMapper;
 
     @GetMapping
-    public ResponseEntity<?> getAll(@RequestParam("address") Optional<String> address) {
+    public ResponseEntity<?> getAll() {
         List<Address> addresses = addressService.getAll();
         List<AddressDto> addressesDto = addressMapper.toDto(addresses);
         return ResponseEntity.ok(addressesDto);

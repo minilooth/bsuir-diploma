@@ -4,7 +4,7 @@ import by.minilooth.diploma.exception.deals.DealNotFoundException;
 import by.minilooth.diploma.models.bean.deals.Deal;
 import by.minilooth.diploma.repository.deals.DealRepository;
 import by.minilooth.diploma.service.deals.DealService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +12,9 @@ import java.util.List;
 
 @Transactional
 @Service
-@RequiredArgsConstructor
 public class DealServiceImpl implements DealService {
 
-    private final DealRepository dealRepository;
+    @Autowired private DealRepository dealRepository;
 
     @Override
     public void save(Deal deal) {

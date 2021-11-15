@@ -31,9 +31,9 @@ $sides: (
   }
 }
 
-@for $px from 1 through 4 {
-  .wp-#{$px * 25} {
-    width: #{$px * 25}#{'%'} !important;
+@for $px from 1 through 20 {
+  .wp-#{$px * 5} {
+    width: #{$px * 5}#{'%'} !important;
   }
 }
 

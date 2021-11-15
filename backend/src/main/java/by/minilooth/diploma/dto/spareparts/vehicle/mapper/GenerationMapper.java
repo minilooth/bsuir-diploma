@@ -1,6 +1,6 @@
 package by.minilooth.diploma.dto.spareparts.vehicle.mapper;
 
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.spareparts.vehicle.GenerationDto;
 import by.minilooth.diploma.models.bean.vehicle.Generation;
 import org.springframework.beans.factory.annotation.Autowired;

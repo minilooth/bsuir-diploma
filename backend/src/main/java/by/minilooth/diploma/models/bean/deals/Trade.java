@@ -32,8 +32,11 @@ public class Trade implements BaseEntity {
     @JoinColumn(name = "spare_part_id", nullable = false)
     private SparePart sparePart;
 
-    @Column(name = "price", nullable = false)
-    private Float price;
+    @Column(name = "purchase_price", nullable = false)
+    private Float purchasePrice;
+
+    @Column(name = "retail_price", nullable = false)
+    private Float retailPrice;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;

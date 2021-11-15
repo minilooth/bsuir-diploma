@@ -1,7 +1,7 @@
 package by.minilooth.diploma.dto.mapper;
 
 import by.minilooth.diploma.models.bean.users.Role;
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.RoleDto;
 import by.minilooth.diploma.service.users.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;

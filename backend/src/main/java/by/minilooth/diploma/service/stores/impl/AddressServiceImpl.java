@@ -7,7 +7,6 @@ import by.minilooth.diploma.models.stores.ProcessAddress;
 import by.minilooth.diploma.repository.stores.AddressRepository;
 import by.minilooth.diploma.service.stores.AddressService;
 import by.minilooth.diploma.service.stores.StoreService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

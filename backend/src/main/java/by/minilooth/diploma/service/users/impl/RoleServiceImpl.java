@@ -3,7 +3,7 @@ package by.minilooth.diploma.service.users.impl;
 import by.minilooth.diploma.models.bean.users.Role;
 import by.minilooth.diploma.repository.users.RoleRepository;
 import by.minilooth.diploma.service.users.RoleService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,10 +12,9 @@ import java.util.Optional;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class RoleServiceImpl implements RoleService {
 
-    private final RoleRepository roleRepository;
+    @Autowired private RoleRepository roleRepository;
 
     @Override
     public void save(Role role) {

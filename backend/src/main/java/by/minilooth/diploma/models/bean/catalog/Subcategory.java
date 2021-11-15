@@ -1,6 +1,7 @@
 package by.minilooth.diploma.models.bean.catalog;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
+import by.minilooth.diploma.models.bean.catalog.builders.SubcategoryBuilder;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,9 +13,8 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(callSuper = false)
-public class Subcategory extends AbstractEntity {
+public class Subcategory extends AbstractEntity implements Comparable<Subcategory> {
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -29,5 +29,18 @@ public class Subcategory extends AbstractEntity {
     @ToString.Exclude
     @OneToMany(mappedBy = "subcategory", cascade = CascadeType.ALL)
     private Set<Group> groups = new HashSet<>();
+
+    @Override
+    public int compareTo(Subcategory o) {
+        int compare = o.getName().compareTo(name);
+        if (compare != 0) {
+            return compare;
+        }
+        return o.getCategory().compareTo(category);
+    }
+
+    public static SubcategoryBuilder builder() {
+        return new SubcategoryBuilder();
+    }
 
 }

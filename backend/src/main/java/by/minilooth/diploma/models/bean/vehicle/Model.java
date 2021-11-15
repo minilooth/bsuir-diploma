@@ -1,6 +1,7 @@
 package by.minilooth.diploma.models.bean.vehicle;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
+import by.minilooth.diploma.models.bean.vehicle.builders.ModelBuilder;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,9 +13,8 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
 @EqualsAndHashCode(callSuper = false)
-public class Model extends AbstractEntity {
+public class Model extends AbstractEntity implements Comparable<Model> {
 
     @Column(name = "name", nullable = false, length = 40)
     private String name;
@@ -29,5 +29,18 @@ public class Model extends AbstractEntity {
     @ToString.Exclude
     @OneToMany(mappedBy = "model", cascade = CascadeType.ALL)
     private Set<Generation> generations = new HashSet<>();
+
+    @Override
+    public int compareTo(Model o) {
+        int compare = o.getName().compareTo(name);
+        if (compare != 0) {
+            return compare;
+        }
+        return o.getMake().compareTo(make);
+    }
+
+    public static ModelBuilder builder() {
+        return new ModelBuilder();
+    }
 
 }

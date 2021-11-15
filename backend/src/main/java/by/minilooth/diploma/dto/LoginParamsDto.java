@@ -9,12 +9,14 @@ import javax.validation.constraints.NotNull;
 @Data
 public class LoginParamsDto implements BaseDto {
 
-    @NotNull(message = "Имя пользователя не должно быть пустым")
-    @NotBlank(message = "Имя пользователя не должно состоять из символов пробела")
+    @NotNull(message = "{validation.user.field.username.null}")
+    @NotBlank(message = "{validation.user.field.username.blank}")
     private String username;
 
-    @NotNull(message = "Пароль не должен быть пустым")
+    @NotNull(message = "{validation.user.field.password.null}")
+    @NotBlank(message = "{validation.user.field.password.blank}")
     private String password;
+
     private Boolean rememberMe;
 
 }

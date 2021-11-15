@@ -32,6 +32,7 @@ public class DatabaseInitializer implements ApplicationListener<ApplicationReady
             if (!authorities.contains(a)) {
                 LOGGER.info("Authority {} not found. Inserting new authority...", a);
                 roleService.save(Role.builder().authority(a).build());
+                LOGGER.info("Authority {} successfully inserted", a);
             }
             else {
                 LOGGER.info("Found authority: {}", a);

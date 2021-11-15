@@ -1,9 +1,10 @@
 package by.minilooth.diploma.models.bean.common;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
+import by.minilooth.diploma.models.bean.common.builders.ImageBuilder;
+import by.minilooth.diploma.models.bean.spareparts.SparePart;
 import by.minilooth.diploma.models.bean.stores.Store;
 import by.minilooth.diploma.models.bean.users.User;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,7 +14,6 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @EqualsAndHashCode(callSuper = false)
 public class Image extends AbstractEntity {
 
@@ -29,5 +29,14 @@ public class Image extends AbstractEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Store store;
+
+    @OneToOne(mappedBy = "image", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private SparePart sparePart;
+
+    public static ImageBuilder builder() {
+        return new ImageBuilder();
+    }
 
 }

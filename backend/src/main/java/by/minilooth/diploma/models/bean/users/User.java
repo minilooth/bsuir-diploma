@@ -25,26 +25,26 @@ public class User extends AbstractEntity implements UserDetails {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "firstname")
+    @Column(name = "firstname", nullable = false)
     private String firstname;
 
-    @Column(name = "middlename")
+    @Column(name = "middlename", nullable = false)
     private String middlename;
 
-    @Column(name = "lastname")
+    @Column(name = "lastname", nullable = false)
     private String lastname;
 
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number", nullable = false, unique = true)
     private String phoneNumber;
 
-    @Column(name = "is_email_confirmed", nullable = false, columnDefinition = "TINYINT(0)")
+    @Column(name = "is_email_confirmed", nullable = false, columnDefinition = "TINYINT")
     @Builder.Default
     private Boolean isEmailConfirmed = false;
 
-    @Column(name = "is_account_non_locked", nullable = false, columnDefinition = "TINYINT(1)")
+    @Column(name = "is_account_non_locked", nullable = false, columnDefinition = "TINYINT")
     @Builder.Default
     private Boolean isAccountNonLocked = true;
 

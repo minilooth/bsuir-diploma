@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public interface StoreService {
 
+    Long ITEMS_PER_PAGE = 9L;
+
     void save(Store store);
     Store save(ProcessStore processStore);
     Store update(ProcessStore processStore, Long id) throws StoreNotFoundException;

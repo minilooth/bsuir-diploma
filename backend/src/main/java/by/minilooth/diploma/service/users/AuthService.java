@@ -23,6 +23,7 @@ public interface AuthService extends UserDetailsService {
     void restorePassword(RestorePasswordParams params) throws UserNotFoundException;
     Boolean isUsernameBusy(String username);
     Boolean isEmailBusy(String email);
+    Boolean isPhoneNumberBusy(String phoneNumber);
     Boolean isRestorePasswordAllowed(String email) throws UserNotFoundException;
 
 }

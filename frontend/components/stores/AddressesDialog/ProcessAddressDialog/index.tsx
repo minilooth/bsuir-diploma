@@ -16,6 +16,7 @@ import {CloseOutlined, House} from "@mui/icons-material";
 import {Form} from "components/common/Form";
 import {Input} from "components/common/Input";
 import {Address, ProcessAddress} from "types/stores/address";
+import {AddressSchema} from "schemas/address";
 
 interface ProcessAddressDialogProps {
   open: boolean;
@@ -33,6 +34,7 @@ export const ProcessAddressDialog: React.FC<ProcessAddressDialogProps> = ({open,
       room: address?.room,
       street: address?.street
     },
+    resolver: yupResolver(AddressSchema)
   })
 
   return (

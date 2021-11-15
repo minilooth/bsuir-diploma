@@ -20,6 +20,7 @@ import {yupResolver} from "@hookform/resolvers/yup";
 import {UserFilterSchema} from "schemas/users";
 import {useTypedSelector} from "redux/hooks";
 import {selectAddresses} from "redux/slices/storesSlice";
+import {StoreFilterSchema} from "schemas/store";
 
 interface StoreFilterProps {
   open: boolean;
@@ -44,6 +45,7 @@ export const StoreFilter: React.FC<StoreFilterProps> = ({open, onClose}) => {
       type: values.type ?? '',
       addressId: values.addressId ?? ''
     },
+    resolver: yupResolver(StoreFilterSchema)
   })
 
   const sort = watch('sort');

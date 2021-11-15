@@ -16,6 +16,7 @@ import {catalogsReducer} from "redux/slices/catalogsSlice";
 import {modificationsReducer} from "redux/slices/modificationsSlice";
 import {manufacturersReducer} from "redux/slices/manufacturersSlice";
 import {storesReducer} from "redux/slices/storesSlice";
+import {sparePartsReducer} from "redux/slices/sparePartsSlice";
 
 const combinedReducers = combineReducers({
   users: usersReducer,
@@ -25,7 +26,8 @@ const combinedReducers = combineReducers({
   catalogs: catalogsReducer,
   modifications: modificationsReducer,
   manufacturers: manufacturersReducer,
-  stores: storesReducer
+  stores: storesReducer,
+  spareParts: sparePartsReducer
 })
 
 const rootReducer = createReducer(combinedReducers(undefined, {type: ""}), (builder) => {

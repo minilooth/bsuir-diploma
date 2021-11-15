@@ -14,21 +14,25 @@ import by.minilooth.diploma.models.bean.users.Role;
 import by.minilooth.diploma.models.bean.users.User;
 import by.minilooth.diploma.service.users.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/user")
-@RequiredArgsConstructor
+@Validated
 public class UserController {
 
-    private final UserService userService;
-    private final UserMapper userMapper;
-    private final UserListMapper userListMapper;
-    private final UserFilterMapper userFilterMapper;
-    private final ProcessUserMapper processUserMapper;
-    private final ChangePasswordMapper changePasswordMapper;
+    @Autowired private UserService userService;
+    @Autowired private UserMapper userMapper;
+    @Autowired private UserListMapper userListMapper;
+    @Autowired private UserFilterMapper userFilterMapper;
+    @Autowired private ProcessUserMapper processUserMapper;
+    @Autowired private ChangePasswordMapper changePasswordMapper;
 
     @PostMapping("/all")
     @PreAuthorize("hasRole('" + Role.ADMIN + "')")
@@ -41,7 +45,7 @@ public class UserController {
 
     @PutMapping
     @PreAuthorize("hasRole('" + Role.ADMIN + "')")
-    public ResponseEntity<?> save(@RequestBody ProcessUserDto processUserDto) throws UserAlreadyExistsException {
+    public ResponseEntity<?> save(@RequestBody @Valid ProcessUserDto processUserDto) throws UserAlreadyExistsException {
         ProcessUser processUser = processUserMapper.toEntity(processUserDto);
         User user = userService.save(processUser);
         UserDto userDto = userMapper.toDto(user);
@@ -50,7 +54,7 @@ public class UserController {
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('" + Role.ADMIN + "')")
-    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody ProcessUserDto processUserDto)
+    public ResponseEntity<?> update(@PathVariable("id") Long id, @RequestBody @Valid ProcessUserDto processUserDto)
             throws UserAlreadyExistsException, UserNotFoundException {
         ProcessUser processUser = processUserMapper.toEntity(processUserDto);
         User user = userService.update(processUser, id);
@@ -76,7 +80,7 @@ public class UserController {
 
     @PostMapping("/password/{id}")
     @PreAuthorize("hasRole('" + Role.ADMIN +"')")
-    public ResponseEntity<?> changePassword(@PathVariable("id") Long id, @RequestBody ChangePasswordDto changePasswordDto)
+    public ResponseEntity<?> changePassword(@PathVariable("id") Long id, @RequestBody @Valid ChangePasswordDto changePasswordDto)
             throws UserNotFoundException, PasswordsAreDifferentException {
         ChangePassword changePassword = changePasswordMapper.toEntity(changePasswordDto);
         User user = userService.changePassword(id, changePassword);

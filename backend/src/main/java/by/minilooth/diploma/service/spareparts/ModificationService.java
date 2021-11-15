@@ -5,6 +5,7 @@ import by.minilooth.diploma.exception.spareparts.ModificationNotFoundException;
 import by.minilooth.diploma.models.bean.spareparts.Modification;
 import by.minilooth.diploma.models.spareparts.characteristic.ProcessModification;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,5 +18,6 @@ public interface ModificationService {
     Modification delete(Long id) throws ModificationNotFoundException, ActionIsImpossibleException;
     Optional<Modification> getById(Long id);
     List<Modification> getAll();
+    List<Modification> getAllByIds(Collection<Long> ids);
 
 }

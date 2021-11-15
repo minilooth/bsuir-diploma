@@ -4,6 +4,7 @@ import by.minilooth.diploma.models.api.AbstractEntity;
 import by.minilooth.diploma.models.bean.catalog.Category;
 import by.minilooth.diploma.models.bean.catalog.Group;
 import by.minilooth.diploma.models.bean.catalog.Subcategory;
+import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.models.bean.stores.Availability;
 import by.minilooth.diploma.models.bean.vehicle.Generation;
 import by.minilooth.diploma.models.bean.vehicle.Make;
@@ -30,7 +31,7 @@ public class SparePart extends AbstractEntity {
     private Manufacturer manufacturer;
 
     @Column(name = "article", nullable = false)
-    private Integer article;
+    private String article;
 
     @Column(name = "description", columnDefinition = "LONGTEXT")
     private String description;
@@ -41,10 +42,12 @@ public class SparePart extends AbstractEntity {
     @Column(name = "retail_price", nullable = false)
     private Float retailPrice;
 
-    @OneToMany(mappedBy = "sparePart")
+    @OneToMany(mappedBy = "sparePart", targetEntity = Characteristic.class, cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Exclude
     private Set<Characteristic> characteristics;
 
-    @OneToMany(mappedBy = "sparePart")
+    @OneToMany(mappedBy = "sparePart", targetEntity = Availability.class, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @EqualsAndHashCode.Exclude
     private Set<Availability> availabilities;
 
     @ManyToOne
@@ -70,5 +73,13 @@ public class SparePart extends AbstractEntity {
     @ManyToOne
     @JoinColumn(name = "group_id")
     private Group group;
+
+    @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name = "spare_part_image",
+            joinColumns =
+                    { @JoinColumn(name = "spare_part_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "image_id", referencedColumnName = "id") })
+    private Image image;
 
 }

@@ -2,7 +2,7 @@ package by.minilooth.diploma.models.bean.stores;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
 import by.minilooth.diploma.models.bean.common.Image;
-import by.minilooth.diploma.models.enums.StoreType;
+import by.minilooth.diploma.common.enums.StoreType;
 import lombok.*;
 
 import javax.persistence.*;
@@ -29,6 +29,7 @@ public class Store extends AbstractEntity {
     private Address address;
 
     @OneToMany(mappedBy = "store")
+    @EqualsAndHashCode.Exclude
     private Set<Availability> availabilities;
 
     @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, orphanRemoval = true)

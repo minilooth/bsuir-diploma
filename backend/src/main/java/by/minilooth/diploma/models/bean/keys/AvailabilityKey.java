@@ -1,22 +1,23 @@
 package by.minilooth.diploma.models.bean.keys;
 
-import by.minilooth.diploma.models.bean.spareparts.SparePart;
-import by.minilooth.diploma.models.bean.stores.Store;
-import lombok.EqualsAndHashCode;
+import by.minilooth.diploma.models.api.BaseEntity;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
+@Data
 @Embeddable
 @EqualsAndHashCode
-public class AvailabilityKey implements Serializable {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class AvailabilityKey implements Serializable, BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "store_id")
-    private Store store;
+    @Column(name = "store_id")
+    private Long storeId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "spare_part_id")
-    private SparePart sparePart;
+    @Column(name = "spare_part_id")
+    private Long sparePartId;
 
 }

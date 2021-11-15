@@ -22,6 +22,7 @@ public class Modification extends AbstractEntity {
     private String name;
 
     @OneToMany(mappedBy = "modification")
+    @EqualsAndHashCode.Exclude
     private Set<Characteristic> characteristics;
 
 }

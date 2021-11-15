@@ -9,9 +9,9 @@ import by.minilooth.diploma.models.ChangePassword;
 import by.minilooth.diploma.models.ProcessUser;
 import by.minilooth.diploma.models.UserFilter;
 import by.minilooth.diploma.models.UserList;
-import by.minilooth.diploma.models.bean.UserSort;
+import by.minilooth.diploma.common.enums.UserSort;
 import by.minilooth.diploma.models.bean.users.ConfirmationToken;
-import by.minilooth.diploma.models.enums.SortDirection;
+import by.minilooth.diploma.common.enums.SortDirection;
 import by.minilooth.diploma.repository.users.UserRepository;
 import by.minilooth.diploma.service.common.MailService;
 import by.minilooth.diploma.service.users.AuthService;
@@ -26,15 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
 import by.minilooth.diploma.models.bean.users.User;
 
 import java.util.*;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-
-    private final static Long ITEMS_PER_PAGE = 9L;
 
     @Autowired private ConfirmationTokenService confirmationTokenService;
     @Autowired private UserRepository userRepository;
@@ -265,10 +262,13 @@ public class UserServiceImpl implements UserService {
         users = users.stream().skip((Objects.nonNull(page) ? page - 1 : 0) * ITEMS_PER_PAGE).limit(ITEMS_PER_PAGE)
                 .collect(Collectors.toList());
 
-        return UserList.builder()
+        UserList userList = UserList.builder()
                 .users(users)
-                .pages((count % ITEMS_PER_PAGE == 0 ? (count / ITEMS_PER_PAGE) : ((count / ITEMS_PER_PAGE) + 1L)))
                 .build();
+
+        userList.setPages((count % ITEMS_PER_PAGE == 0 ? (count / ITEMS_PER_PAGE) : ((count / ITEMS_PER_PAGE) + 1L)));
+
+        return userList;
     }
 
     @Override

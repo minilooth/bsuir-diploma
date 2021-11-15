@@ -19,11 +19,14 @@ interface InputProps {
   onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   autoFocus?: boolean;
   fullWidth?: boolean;
+  multiline?: boolean;
+  minRows?: number | string;
+  maxRows?: number | string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   const {id, type = 'text', label, variant = 'standard', fullWidth = true, placeholder, className, name, error, value,
-    helperText, inputProps, onChange, onBlur, onKeyDown, autoFocus} = props
+    helperText, inputProps, onChange, onBlur, onKeyDown, autoFocus, multiline = false, minRows, maxRows} = props
   return (
     <TextField
       inputRef={ref}
@@ -43,6 +46,9 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref)
       onBlur={onBlur}
       onKeyDown={onKeyDown}
       autoFocus={autoFocus}
+      multiline={multiline}
+      minRows={minRows}
+      maxRows={maxRows}
     />
   )
 });

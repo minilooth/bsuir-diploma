@@ -3,16 +3,15 @@ package by.minilooth.diploma.service.users.impl;
 import by.minilooth.diploma.models.bean.users.ConfirmationToken;
 import by.minilooth.diploma.repository.users.ConfirmationTokenRepository;
 import by.minilooth.diploma.service.users.ConfirmationTokenService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
-@RequiredArgsConstructor
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService {
 
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+    @Autowired private ConfirmationTokenRepository confirmationTokenRepository;
 
     @Override
     public void save(ConfirmationToken confirmationToken) {

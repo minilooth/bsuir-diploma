@@ -1,6 +1,6 @@
 package by.minilooth.diploma.dto.mapper;
 
-import by.minilooth.diploma.config.mapper.AbstractMapper;
+import by.minilooth.diploma.common.api.mapper.AbstractMapper;
 import by.minilooth.diploma.dto.UserFilterDto;
 import by.minilooth.diploma.models.UserFilter;
 import org.springframework.stereotype.Component;

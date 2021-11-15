@@ -6,6 +6,7 @@ import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.dto.ImageDto;
 import by.minilooth.diploma.service.common.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -18,11 +19,10 @@ import java.io.IOException;
 
 @RequestMapping(ApiConsts.IMAGE_API_URI)
 @RestController
-@RequiredArgsConstructor
 public class ImageController {
 
-    private final ImageService imageService;
-    private final ImageMapper imageMapper;
+    @Autowired private ImageService imageService;
+    @Autowired private ImageMapper imageMapper;
 
     @GetMapping("/{filename}")
     public ResponseEntity<?> get(@PathVariable("filename") String filename) throws FileNotFoundException {

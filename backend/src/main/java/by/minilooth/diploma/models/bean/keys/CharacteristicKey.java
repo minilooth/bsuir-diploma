@@ -1,25 +1,25 @@
 package by.minilooth.diploma.models.bean.keys;
 
+import by.minilooth.diploma.models.api.BaseEntity;
 import by.minilooth.diploma.models.bean.spareparts.SparePart;
 import by.minilooth.diploma.models.bean.spareparts.Modification;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
+@Data
 @Embeddable
 @EqualsAndHashCode
-public class CharacteristicKey implements Serializable {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class CharacteristicKey implements Serializable, BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "spare_part_id")
-    private SparePart sparePart;
+    @Column(name = "spare_part_id")
+    private Long sparePartId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "modification_id")
-    private Modification modification;
+    @Column(name = "modification_id")
+    private Long modificationId;
 
 }
