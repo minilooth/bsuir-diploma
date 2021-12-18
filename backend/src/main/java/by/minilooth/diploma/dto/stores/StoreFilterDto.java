@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class StoreFilterDto extends AbstractFilter<StoreSort> implements BaseDto {
 
-    private StoreType storeType;
+    private StoreType type;
     private Long addressId;
 
 }

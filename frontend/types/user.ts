@@ -1,5 +1,6 @@
 import {SortDirection} from "types/common/sort-direction";
 import {Image} from "types/image";
+import {Cart} from "types/cart";
 
 export interface User {
   id: number;
@@ -13,8 +14,10 @@ export interface User {
   updatedAt: Date;
   isEmailConfirmed: boolean;
   isAccountNonLocked: boolean;
+  isAccountNonDisabled: boolean;
   roles: Role[];
   avatar: Image;
+  cart: Cart;
 }
 
 export interface Role {
@@ -66,8 +69,8 @@ export const SortItems: UserSortItem[] = [
 ]
 
 export interface UserFilter {
-  sort: UserSort;
-  sortDirection: SortDirection;
+  sort: string;
+  sortDirection: string;
   fullname: string;
   email: string;
   phoneNumber: string;

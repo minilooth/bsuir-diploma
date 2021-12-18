@@ -4,7 +4,7 @@ import {IncomingHttpHeaders} from "http";
 import {ManufacturerService} from "service/spareparts/manufacturer/ManufacturerService";
 import {RootState} from "redux/store";
 
-interface ManufacturersSliceState {
+export interface ManufacturersSliceState {
   manufacturers: Manufacturer[];
 }
 

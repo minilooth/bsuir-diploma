@@ -1,6 +1,7 @@
 package by.minilooth.diploma.models.bean.users;
 
 import by.minilooth.diploma.models.api.AbstractEntity;
+import by.minilooth.diploma.models.bean.cart.Cart;
 import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.models.bean.deals.Deal;
 import lombok.*;
@@ -48,6 +49,10 @@ public class User extends AbstractEntity implements UserDetails {
     @Builder.Default
     private Boolean isAccountNonLocked = true;
 
+    @Column(name = "is_account_non_disabled", nullable = false, columnDefinition = "TINYINT")
+    @Builder.Default
+    private Boolean isAccountNonDisabled = true;
+
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     @ManyToMany
@@ -72,9 +77,17 @@ public class User extends AbstractEntity implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Deal> deals = new HashSet<>();
 
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinTable(name = "user_cart",
+            joinColumns =
+                    { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns =
+                    { @JoinColumn(name = "cart_id", referencedColumnName = "id") })
+    private Cart cart;
+
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return isEmailConfirmed;
     }
 
     @Override
@@ -89,6 +102,6 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isEmailConfirmed;
+        return isAccountNonDisabled;
     }
 }

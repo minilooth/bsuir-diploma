@@ -37,7 +37,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
     @Override
     public Manufacturer update(ProcessManufacturer processManufacturer, Long id) throws ManufacturerNotFoundException {
-        Manufacturer manufacturer = getById(id).orElseThrow(() -> new ManufacturerNotFoundException(id));
+        Manufacturer manufacturer = getById(id);
 
         manufacturer.setName(processManufacturer.getName());
 
@@ -52,7 +52,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
     @Override
     public Manufacturer delete(Long id) throws ManufacturerNotFoundException, ActionIsImpossibleException {
-        Manufacturer manufacturer = getById(id).orElseThrow(() -> new ManufacturerNotFoundException(id));
+        Manufacturer manufacturer = getById(id);
 
         if (sparePartService.existsByManufacturer(manufacturer)) {
             throw new ActionIsImpossibleException("Невозможно удалить производителя который используется в запчасти");
@@ -63,8 +63,8 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
 
     @Override
-    public Optional<Manufacturer> getById(Long id) throws ManufacturerNotFoundException {
-        return manufacturerRepository.findById(id);
+    public Manufacturer getById(Long id) throws ManufacturerNotFoundException {
+        return manufacturerRepository.findById(id).orElseThrow(() -> new ManufacturerNotFoundException(id));
     }
 
     @Override

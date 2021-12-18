@@ -17,7 +17,7 @@ public interface GroupService {
     Group update(ProcessGroup processGroup, Long id) throws GroupNotFoundException;
     void delete(Group group);
     Group delete(Long id) throws GroupNotFoundException, ActionIsImpossibleException;
-    Optional<Group> getById(Long id);
+    Group getById(Long id) throws GroupNotFoundException;
     List<Group> getAll();
     List<Group> getAllBySubcategory(Long id) throws SubcategoryNotFoundException;
     Boolean existsBySubcategory(Subcategory subcategory);

@@ -15,7 +15,7 @@ public interface ManufacturerService {
     Manufacturer update(ProcessManufacturer processManufacturer, Long id) throws ManufacturerNotFoundException;
     void delete(Manufacturer manufacturer);
     Manufacturer delete(Long id) throws ManufacturerNotFoundException, ActionIsImpossibleException;
-    Optional<Manufacturer> getById(Long id) throws ManufacturerNotFoundException;
+    Manufacturer getById(Long id) throws ManufacturerNotFoundException;
     List<Manufacturer> getAll();
     List<Manufacturer> getAll(Optional<String> name);
 

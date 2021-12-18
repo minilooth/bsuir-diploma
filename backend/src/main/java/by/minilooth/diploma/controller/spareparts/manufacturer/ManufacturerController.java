@@ -26,12 +26,20 @@ public class ManufacturerController {
     @Autowired private ManufacturerMapper manufacturerMapper;
     @Autowired private ProcessManufacturerMapper processManufacturerMapper;
 
-    @GetMapping
+    @GetMapping("/all")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
     public ResponseEntity<?> getAll(@RequestParam("name") Optional<String> name) {
         List<Manufacturer> manufacturers = manufacturerService.getAll(name);
         List<ManufacturerDto> manufacturerDtos = manufacturerMapper.toDto(manufacturers);
         return ResponseEntity.ok(manufacturerDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws ManufacturerNotFoundException {
+        Manufacturer manufacturer = manufacturerService.getById(id);
+        ManufacturerDto manufacturerDto = manufacturerMapper.toDto(manufacturer);
+        return ResponseEntity.ok(manufacturerDto);
     }
 
     @PutMapping

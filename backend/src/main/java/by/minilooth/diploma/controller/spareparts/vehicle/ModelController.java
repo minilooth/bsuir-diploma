@@ -26,12 +26,20 @@ public class ModelController {
     @Autowired private ModelService modelService;
     @Autowired private ProcessModelMapper processModelMapper;
 
-    @GetMapping("/{id}")
+    @GetMapping("/all/{id}")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
-    public ResponseEntity<?> getByMake(@PathVariable("id") Long id) throws MakeNotFoundException {
+    public ResponseEntity<?> getAll(@PathVariable("id") Long id) throws MakeNotFoundException {
         List<Model> models = modelService.getAllByMakeSorted(id);
         List<ModelDto> modelDtos = modelBeanMapper.toDto(models);
         return ResponseEntity.ok(modelDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws ModelNotFoundException {
+        Model model = modelService.getById(id);
+        ModelDto modelDto = modelBeanMapper.toDto(model);
+        return ResponseEntity.ok(modelDto);
     }
 
     @PutMapping

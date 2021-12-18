@@ -22,6 +22,7 @@ interface InputProps {
   multiline?: boolean;
   minRows?: number | string;
   maxRows?: number | string;
+  readonly?: boolean;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {

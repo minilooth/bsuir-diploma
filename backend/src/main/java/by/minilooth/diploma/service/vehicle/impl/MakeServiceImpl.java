@@ -39,7 +39,7 @@ public class MakeServiceImpl implements MakeService {
 
     @Override
     public Make update(ProcessMake processMake, Long id) throws MakeNotFoundException {
-        Make make = getById(id).orElseThrow(() -> new MakeNotFoundException(id));
+        Make make = getById(id);
 
         make.setName(processMake.getName().trim());
 
@@ -54,7 +54,7 @@ public class MakeServiceImpl implements MakeService {
 
     @Override
     public Make delete(Long id) throws MakeNotFoundException, ActionIsImpossibleException {
-        Make make = getById(id).orElseThrow(() -> new MakeNotFoundException(id));
+        Make make = getById(id);
 
         if (modelService.existsByMake(make)) {
             throw new ActionIsImpossibleException("Невозможно удалить марку в которой существуют модели");
@@ -69,8 +69,8 @@ public class MakeServiceImpl implements MakeService {
     }
 
     @Override
-    public Optional<Make> getById(Long id) {
-        return makeRepository.findById(id);
+    public Make getById(Long id) throws MakeNotFoundException {
+        return makeRepository.findById(id).orElseThrow(() -> new MakeNotFoundException(id));
     }
 
     @Override

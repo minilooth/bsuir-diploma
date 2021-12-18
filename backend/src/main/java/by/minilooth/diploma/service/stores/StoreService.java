@@ -20,7 +20,7 @@ public interface StoreService {
     Store update(ProcessStore processStore, Long id) throws StoreNotFoundException;
     void delete(Store store);
     Store delete(Long id) throws StoreNotFoundException;
-    Optional<Store> getById(Long id);
+    Store getById(Long id) throws StoreNotFoundException;
     StoreList getAll(StoreFilter storeFilter);
     List<Store> getAll();
     Boolean existsByAddress(Address address);

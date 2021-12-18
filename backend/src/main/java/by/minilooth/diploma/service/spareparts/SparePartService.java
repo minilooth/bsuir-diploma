@@ -1,5 +1,7 @@
 package by.minilooth.diploma.service.spareparts;
 
+import by.minilooth.diploma.exception.ActionIsImpossibleException;
+import by.minilooth.diploma.exception.spareparts.AvailabilityNotFoundException;
 import by.minilooth.diploma.exception.spareparts.SparePartAlreadyExistsException;
 import by.minilooth.diploma.exception.spareparts.SparePartNotFoundException;
 import by.minilooth.diploma.models.bean.catalog.Category;
@@ -9,6 +11,7 @@ import by.minilooth.diploma.models.bean.spareparts.Manufacturer;
 import by.minilooth.diploma.models.bean.spareparts.Modification;
 import by.minilooth.diploma.models.bean.spareparts.SparePart;
 import by.minilooth.diploma.models.bean.stores.Availability;
+import by.minilooth.diploma.models.bean.stores.Store;
 import by.minilooth.diploma.models.bean.vehicle.Generation;
 import by.minilooth.diploma.models.bean.vehicle.Make;
 import by.minilooth.diploma.models.bean.vehicle.Model;
@@ -30,7 +33,9 @@ public interface SparePartService {
             SparePartAlreadyExistsException;
     SparePart delete(Long id) throws SparePartNotFoundException;
     SparePart updateAvailability(List<Availability> availabilities, Long id) throws SparePartNotFoundException;
-    Optional<SparePart> getById(Long id);
+    void updateAvailability(SparePart sparePart, Store store, Long quantity)
+            throws ActionIsImpossibleException, AvailabilityNotFoundException;
+    SparePart getById(Long id) throws SparePartNotFoundException;
     List<SparePart> getAll();
     SparePartList getAll(SparePartFilter sparePartFilter);
     Boolean existsByManufacturer(Manufacturer manufacturer);

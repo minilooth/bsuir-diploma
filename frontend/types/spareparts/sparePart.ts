@@ -67,7 +67,6 @@ export enum SparePartSort {
   NAME,
   MANUFACTURER,
   ARTICLE,
-  DESCRIPTION,
   PURCHASE_PRICE,
   RETAIL_PRICE,
   MAKE,
@@ -105,7 +104,6 @@ export const SparePartSortItems: SparePartSortItem[] = [
   {field: SparePartSort.NAME, label: 'Название', query: 'name'},
   {field: SparePartSort.MANUFACTURER, label: 'Производитель', query: 'manufacturerId'},
   {field: SparePartSort.ARTICLE, label: 'Артикул', query: 'article'},
-  {field: SparePartSort.DESCRIPTION, label: 'Описание', query: 'description'},
   {field: SparePartSort.PURCHASE_PRICE, label: 'Закупочная цена', query: 'purchasePrice'},
   {field: SparePartSort.RETAIL_PRICE, label: 'Розничная цена', query: 'retailPrice'},
   {field: SparePartSort.MAKE, label: 'Марка', query: 'makeId'},
@@ -117,11 +115,10 @@ export const SparePartSortItems: SparePartSortItem[] = [
 ]
 
 export interface SparePartFilter {
-  sort: SparePartSort;
-  sortDirection: SortDirection;
+  sort: string;
+  sortDirection: string;
   manufacturerId: number;
   article: string;
-  description: string;
   purchasePriceFrom: number;
   purchasePriceTo: number;
   retailPriceFrom: number;

@@ -42,7 +42,7 @@ public class GenerationServiceImpl implements GenerationService {
 
     @Override
     public Generation update(ProcessGeneration processGeneration, Long id) throws GenerationNotFoundException {
-        Generation generation = getById(id).orElseThrow(() -> new GenerationNotFoundException(id));
+        Generation generation = getById(id);
 
         generation.setModel(processGeneration.getModel());
         generation.setName(processGeneration.getName().trim());
@@ -58,7 +58,7 @@ public class GenerationServiceImpl implements GenerationService {
 
     @Override
     public Generation delete(Long id) throws GenerationNotFoundException, ActionIsImpossibleException {
-        Generation generation = getById(id).orElseThrow(() -> new GenerationNotFoundException(id));
+        Generation generation = getById(id);
 
         if (sparePartService.existsByGeneration(generation)) {
             throw new ActionIsImpossibleException("Невозможно удалить поколение которое используется в запчасти");
@@ -69,13 +69,13 @@ public class GenerationServiceImpl implements GenerationService {
     }
 
     @Override
-    public Optional<Generation> getById(Long id) {
-        return generationRepository.findById(id);
+    public Generation getById(Long id) throws GenerationNotFoundException {
+        return generationRepository.findById(id).orElseThrow(() -> new GenerationNotFoundException(id));
     }
 
     @Override
     public List<Generation> getAllByModel(Long id) throws ModelNotFoundException {
-        Model model = modelService.getById(id).orElseThrow(() -> new ModelNotFoundException(id));
+        Model model = modelService.getById(id);
         return generationRepository.findAllByModel(model);
     }
 
@@ -86,7 +86,7 @@ public class GenerationServiceImpl implements GenerationService {
 
     @Override
     public List<Generation> getAllByModelSorted(Long id) throws ModelNotFoundException {
-        Model model = modelService.getById(id).orElseThrow(() -> new ModelNotFoundException(id));
+        Model model = modelService.getById(id);
         return generationRepository.findAllByModelOrderByName(model);
     }
 

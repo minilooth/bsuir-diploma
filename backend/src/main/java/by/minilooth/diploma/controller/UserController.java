@@ -3,6 +3,7 @@ package by.minilooth.diploma.controller;
 import by.minilooth.diploma.dto.*;
 import by.minilooth.diploma.dto.mapper.*;
 import by.minilooth.diploma.exception.ActionIsImpossibleException;
+import by.minilooth.diploma.exception.BadPasswordException;
 import by.minilooth.diploma.exception.PasswordsAreDifferentException;
 import by.minilooth.diploma.exception.users.UserAlreadyExistsException;
 import by.minilooth.diploma.exception.users.UserNotFoundException;
@@ -78,6 +79,14 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @PostMapping("/enable/{id}")
+    @PreAuthorize("hasRole('" + Role.ADMIN + "')")
+    public ResponseEntity<?> enable(@PathVariable("id") Long id) throws UserNotFoundException {
+        User user = userService.enable(id);
+        UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(userDto);
+    }
+
     @PostMapping("/password/{id}")
     @PreAuthorize("hasRole('" + Role.ADMIN +"')")
     public ResponseEntity<?> changePassword(@PathVariable("id") Long id, @RequestBody @Valid ChangePasswordDto changePasswordDto)
@@ -85,6 +94,26 @@ public class UserController {
         ChangePassword changePassword = changePasswordMapper.toEntity(changePasswordDto);
         User user = userService.changePassword(id, changePassword);
         UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/password")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto)
+            throws PasswordsAreDifferentException, BadPasswordException {
+        ChangePassword changePassword = changePasswordMapper.toEntity(changePasswordDto);
+        User user = userService.changePassword(changePassword);
+        UserDto userDto = userMapper.toDto(user);
+        return ResponseEntity.ok(userDto);
+    }
+
+    @PostMapping("/update-profile")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> updateProfile(@RequestBody @Validated(UserDto.Profile.class) UserDto userDto)
+            throws UserNotFoundException, UserAlreadyExistsException {
+        User user = userMapper.toEntity(userDto);
+        user = userService.updateProfile(user);
+        userDto = userMapper.toDto(user);
         return ResponseEntity.ok(userDto);
     }
 

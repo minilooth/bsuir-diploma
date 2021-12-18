@@ -3,10 +3,7 @@ package by.minilooth.diploma.models.bean.spareparts;
 import by.minilooth.diploma.models.api.AbstractEntity;
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.Set;
 
 @Entity

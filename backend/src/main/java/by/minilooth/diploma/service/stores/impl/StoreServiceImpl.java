@@ -2,6 +2,7 @@ package by.minilooth.diploma.service.stores.impl;
 
 import by.minilooth.diploma.exception.stores.StoreNotFoundException;
 import by.minilooth.diploma.common.enums.StoreSort;
+import by.minilooth.diploma.models.bean.keys.AvailabilityKey;
 import by.minilooth.diploma.models.bean.stores.Address;
 import by.minilooth.diploma.models.bean.stores.Availability;
 import by.minilooth.diploma.models.bean.stores.Store;
@@ -35,26 +36,32 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store save(ProcessStore processStore) {
-        Set<Availability> spareParts = sparePartService.getAll().stream().map(p -> Availability.builder()
-                .sparePart(p)
-                .quantity(0L)
-                .build()
-        ).collect(Collectors.toSet());
-
         Store store = Store.builder()
                 .name(processStore.getName())
                 .type(processStore.getType())
                 .address(processStore.getAddress())
                 .image(processStore.getImage())
-                .availabilities(spareParts)
                 .build();
+
+        Set<Availability> availabilities = sparePartService.getAll().stream().map(p -> Availability.builder()
+                .id(AvailabilityKey.builder()
+                        .storeId(store.getId())
+                        .sparePartId(p.getId())
+                        .build())
+                .sparePart(p)
+                .store(store)
+                .quantity(0L)
+                .build()
+        ).collect(Collectors.toSet());
+
+        store.setAvailabilities(availabilities);
         save(store);
         return store;
     }
 
     @Override
     public Store update(ProcessStore processStore, Long id) throws StoreNotFoundException {
-        Store store = getById(id).orElseThrow(() -> new StoreNotFoundException(id));
+        Store store = getById(id);
 
         store.setName(processStore.getName());
         store.setType(processStore.getType());
@@ -72,14 +79,14 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store delete(Long id) throws StoreNotFoundException {
-        Store store = getById(id).orElseThrow(() -> new StoreNotFoundException(id));
+        Store store = getById(id);
         delete(store);
         return store;
     }
 
     @Override
-    public Optional<Store> getById(Long id) {
-        return storeRepository.findById(id);
+    public Store getById(Long id) throws StoreNotFoundException {
+        return storeRepository.findById(id).orElseThrow(() -> new StoreNotFoundException(id));
     }
 
     @Override

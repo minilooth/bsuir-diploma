@@ -12,7 +12,6 @@ public class SparePartFilter extends AbstractFilter<SparePartSort> implements Ba
 
     private Long manufacturerId;
     private String article;
-    private String description;
     private Float purchasePriceFrom;
     private Float purchasePriceTo;
     private Float retailPriceFrom;

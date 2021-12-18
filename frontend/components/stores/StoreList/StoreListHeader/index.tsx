@@ -1,11 +1,11 @@
 import React, {ChangeEvent} from 'react';
-import {Box, Button, Chip, InputAdornment, Stack, Typography} from "@mui/material";
-import {Search, Store, Settings} from "@mui/icons-material";
+import {Box, Button, ButtonGroup, Chip, InputAdornment, Stack, Typography} from "@mui/material";
+import {Search, Store, Settings, Add, FilterList} from "@mui/icons-material";
 import {Input} from "components/common/Input";
 import debounce from "debounce";
 import {useQuery} from "core/hooks/useQuery";
 import {useForm} from "react-hook-form";
-import {SortDirection} from "types/common/sort-direction";
+import {SortDirection, SortDirections} from "types/common/sort-direction";
 import {StoreSortItems, StoreType, StoreTypes} from "types/stores/store";
 import {useTypedSelector} from "redux/hooks";
 import {selectAddresses} from "redux/slices/storesSlice";
@@ -83,9 +83,9 @@ export const StoreListHeader = () => {
   }
 
   const sort = StoreSortItems.find(i => i.query === values.sort)?.label;
-  const sortDirection = SortDirection[values.sortDirection as keyof typeof SortDirection]?.toLowerCase();
+  const sortDirection = SortDirections.find(i => i.query === values.sortDirection)?.label?.toLowerCase();
   const address = addresses.find(a => a.id === Number(values.addressId));
-  const type = StoreTypes.find(t => t.key === StoreType[values.type as keyof typeof StoreType])?.label;
+  const type = StoreTypes.find(t => t.query === values.type)?.label;
 
   return (
     <>
@@ -93,7 +93,6 @@ export const StoreListHeader = () => {
         <Typography variant="h4" className="d-flex align-center">
           <Store fontSize="inherit" className="mr-10"/>
           Склады и магазины
-          <Settings fontSize="inherit" className="ml-10 cu-p" onClick={() => toggleDialog(DialogType.SETTINGS)}/>
         </Typography>
         <Box>
           <Input
@@ -112,12 +111,26 @@ export const StoreListHeader = () => {
       </Stack>
       <Stack direction="row" spacing={2} className="pt-20 pb-20 align-center">
         <Stack direction="row" spacing={1} className="align-center">
-          <Button variant="outlined" color="primary" className="w-100" onClick={() => toggleDialog(DialogType.PROCESS)}>
-            Добавить
-          </Button>
-          <Button variant="outlined" color="primary" className="w-100" onClick={() => toggleDialog(DialogType.FILTER)}>
-            Фильтр
-          </Button>
+          <ButtonGroup color={"primary"} variant={"outlined"} size={"small"}>
+            <Button
+              startIcon={<Add/>}
+              onClick={() => toggleDialog(DialogType.PROCESS)}
+            >
+              Добавить
+            </Button>
+            <Button
+              startIcon={<FilterList/>}
+              onClick={() => toggleDialog(DialogType.FILTER)}
+            >
+              Фильтр
+            </Button>
+            <Button
+              startIcon={<Settings/>}
+              onClick={() => toggleDialog(DialogType.SETTINGS)}
+            >
+              Настройки
+            </Button>
+          </ButtonGroup>
         </Stack>
         <Stack direction="row" spacing={1} className="super-scroll align-center">
           {sort && sortDirection && (

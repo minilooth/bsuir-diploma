@@ -2,13 +2,22 @@ import {IncomingHttpHeaders} from "http";
 import {Manufacturer, ProcessManufacturer} from "types/spareparts/manufacturer";
 import {Axios} from "core/axios";
 
+enum ManufacturerRoutes {
+  ALL = '/all'
+}
+
 export class ManufacturerService {
 
   private static readonly URL = '/manufacturer';
 
   static async getAll(headers?: IncomingHttpHeaders): Promise<Manufacturer[]> {
-    const {data: manufacturers} = await Axios.get<Manufacturer[]>(this.URL, {headers});
+    const {data: manufacturers} = await Axios.get<Manufacturer[]>(this.URL + ManufacturerRoutes.ALL, {headers});
     return manufacturers;
+  }
+
+  static async getById(id: string | number, headers?: IncomingHttpHeaders): Promise<Manufacturer> {
+    const {data: manufacturer} = await Axios.get<Manufacturer>(`${this.URL}/${id}`, {headers});
+    return manufacturer;
   }
 
   static async add(processManufacturer: ProcessManufacturer): Promise<Manufacturer> {

@@ -16,7 +16,6 @@ import javax.persistence.*;
 public class Characteristic implements BaseEntity {
 
     @EmbeddedId
-    @EqualsAndHashCode.Exclude
     private CharacteristicKey id;
 
     @ManyToOne

@@ -6,9 +6,12 @@ import {useTypedSelector} from "redux/hooks";
 import {selectCurrentUser} from "redux/slices/usersSlice";
 
 import styles from "components/nav/Navbar/UserData/UserData.module.scss";
+import {ProfileDialog} from "components/users/ProfileDialog";
+import {User} from "types/user";
 
 export const UserData: React.FC = () => {
   const [userPopupOpened, setUserPopupOpened] = React.useState(false);
+  const [profileOpened, setProfileOpened] = React.useState(false);
   const user = useTypedSelector(selectCurrentUser);
   const {avatar, username} = user || {};
 
@@ -18,6 +21,10 @@ export const UserData: React.FC = () => {
 
   const onClickAwayUser = () => {
     setUserPopupOpened(false);
+  }
+
+  const toggleProfile = () => {
+    setProfileOpened((prev) => !prev);
   }
 
   return (
@@ -34,9 +41,10 @@ export const UserData: React.FC = () => {
       </ClickAwayListener>
       <Fade in={userPopupOpened} timeout={300}>
         <Box component="div" className={styles.popup}>
-          <UserPopupMenu/>
+          <UserPopupMenu onProfile={toggleProfile}/>
         </Box>
       </Fade>
+      <ProfileDialog open={profileOpened} onClose={toggleProfile} user={user as User} self={true}/>
     </>
   )
 }

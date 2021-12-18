@@ -1,13 +1,15 @@
 import {GetServerSidePropsContext, GetServerSidePropsResult} from 'next';
 import nookies from 'nookies';
 
-import {User} from "types/user";
+import {RoleEnum, User} from "types/user";
 import {AuthRoutes} from "core/api";
 import {AppRoutes} from "core/routes";
 import {Axios} from "core/axios";
 import {RootState} from "redux/store";
-import {initialize} from 'redux/slices/usersSlice';
+import {initialize, setCurrentUser} from 'redux/slices/usersSlice';
 import {AnyAction, EnhancedStore} from "@reduxjs/toolkit";
+import {enqueueError} from "redux/slices/snackbar/actions";
+import { removeSnackbar } from 'redux/slices/snackbar';
 
 type IncomingGSSP<P> = (ctx: GetServerSidePropsContext, user: User | null) => Promise<P>;
 
@@ -15,12 +17,13 @@ type WithAuthServerSidePropsResult = GetServerSidePropsResult<{ [key: string]: a
 
 type WithAuthServerSidePropsOptions = {
   authorizationNeeded?: boolean,
+  authorities?: RoleEnum[],
   canAccessAuthorized?: boolean
 };
 
 export const withAuthServerSideProps = (
   incomingGSSP?: IncomingGSSP<WithAuthServerSidePropsResult> | null,
-  options: WithAuthServerSidePropsOptions = {authorizationNeeded: false, canAccessAuthorized: true},
+  options: WithAuthServerSidePropsOptions = {authorizationNeeded: false, authorities: [], canAccessAuthorized: true},
   store?: EnhancedStore<RootState, AnyAction, [any]>,
 ) => {
   return async (ctx: GetServerSidePropsContext): Promise<WithAuthServerSidePropsResult> => {
@@ -29,18 +32,18 @@ export const withAuthServerSideProps = (
 
     if (!isLoggedIn && options.authorizationNeeded) {
       if (token) {
-        return {
-          redirect: {
-            destination: AppRoutes.LOGIN + '?expired=true',
-            permanent: true
-          }
-        }
-      } else {
-        return {
-          redirect: {
-            destination: AppRoutes.LOGIN,
-            permanent: true
-          }
+        // const key = new Date().getTime() + Math.random();
+        store?.dispatch(enqueueError('Session expired. Please log in'));
+        // Remove message on server. Need to better solution
+        // setTimeout(() => {
+        //   store?.dispatch(removeSnackbar(key));
+        // }, 3000);
+      }
+      store?.dispatch(setCurrentUser(null));
+      return {
+        redirect: {
+          destination: AppRoutes.LOGIN,
+          permanent: true,
         }
       }
     }
@@ -58,6 +61,21 @@ export const withAuthServerSideProps = (
 
     if (store && !store.getState().users.initialized) {
       store.dispatch(initialize(user));
+    }
+
+    if (options.authorizationNeeded && !options.authorities?.includes(user.roles[0].authority)) {
+      // const key = new Date().getTime() + Math.random();
+      store?.dispatch(enqueueError('You don\'t have permissions to access this page'));
+      // Remove message on server. Need to better solution
+      // setTimeout(() => {
+      //   store?.dispatch(removeSnackbar(key));
+      // }, 3000);
+      return {
+        redirect: {
+          destination: AppRoutes.HOME,
+          permanent: true
+        }
+      }
     }
 
     if (incomingGSSP) {

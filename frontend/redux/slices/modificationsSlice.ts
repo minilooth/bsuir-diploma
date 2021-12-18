@@ -4,7 +4,7 @@ import {IncomingHttpHeaders} from "http";
 import {ModificationService} from "service/spareparts/modification/ModificationService";
 import {RootState} from "redux/store";
 
-interface ModificationsSliceState {
+export interface ModificationsSliceState {
   modifications: Modification[];
 }
 

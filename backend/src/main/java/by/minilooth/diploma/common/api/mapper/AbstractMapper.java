@@ -40,21 +40,33 @@ public abstract class AbstractMapper<E extends BaseEntity, D extends BaseDto> im
 
     @Override
     public List<E> toEntity(Collection<D> dtos) {
+        if (Objects.isNull(dtos)) {
+            return null;
+        }
         return dtos.stream().map(this::toEntity).collect(Collectors.toList());
     }
 
     @Override
     public List<D> toDto(Collection<E> entities) {
+        if (Objects.isNull(entities)) {
+            return null;
+        }
         return entities.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     @Override
     public <C extends Collection<E>> C toEntity(Collection<D> dtos, Collector<E, ?, C> collector) {
+        if (Objects.isNull(dtos)) {
+            return null;
+        }
         return dtos.stream().map(this::toEntity).collect(collector);
     }
 
     @Override
     public <C extends Collection<D>> C toDto(Collection<E> entities, Collector<D, ?, C> collector) {
+        if (Objects.isNull(entities)) {
+            return null;
+        }
         return entities.stream().map(this::toDto).collect(collector);
     }
 

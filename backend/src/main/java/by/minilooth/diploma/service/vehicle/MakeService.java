@@ -15,7 +15,7 @@ public interface MakeService {
     Make update(ProcessMake processMake, Long id) throws MakeNotFoundException;
     void delete(Make make);
     Make delete(Long id) throws MakeNotFoundException, ActionIsImpossibleException;
-    Optional<Make> getById(Long id);
+    Make getById(Long id) throws MakeNotFoundException;
     List<Make> getAllSorted();
     List<Make> getAll();
     Boolean existsById(Long id);

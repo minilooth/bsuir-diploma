@@ -4,6 +4,7 @@ import by.minilooth.diploma.models.api.BaseEntity;
 import by.minilooth.diploma.models.bean.catalog.Category;
 import by.minilooth.diploma.models.bean.catalog.Group;
 import by.minilooth.diploma.models.bean.catalog.Subcategory;
+import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.models.bean.spareparts.Characteristic;
 import by.minilooth.diploma.models.bean.spareparts.Manufacturer;
 import by.minilooth.diploma.models.bean.vehicle.Generation;
@@ -29,5 +30,6 @@ public class ProcessSparePart implements BaseEntity {
     private Category category;
     private Subcategory subcategory;
     private Group group;
+    private Image image;
 
 }

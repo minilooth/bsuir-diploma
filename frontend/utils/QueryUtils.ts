@@ -1,5 +1,6 @@
 import {ParsedUrlQuery} from "querystring";
 import {SortDirection} from "types/common/sort-direction";
+import * as _ from "lodash";
 
 export class QueryUtils {
   static getQueryValue(query: ParsedUrlQuery, key: string): string | string[] | undefined {
@@ -8,16 +9,17 @@ export class QueryUtils {
 
   static removeKeys(query: ParsedUrlQuery, keys: string | string[]): ParsedUrlQuery {
     if (Array.isArray(keys)) {
-      keys.forEach(k => delete query[k]);
+      keys.forEach(k => {
+        query = _.omit(query, k);
+      });
     }
     else {
-      delete query[keys];
+      query = _.omit(query, keys);
     }
     return query;
   }
 
   static appendKeys(query: ParsedUrlQuery, keys: object | object[]) {
-    console.log(query);
     if (Array.isArray(keys)) {
       keys.forEach(k => {
         Object.entries(k).forEach(([key, value]) => {

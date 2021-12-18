@@ -8,7 +8,7 @@ import {IncomingHttpHeaders} from "http";
 import {ModelService} from "service/spareparts/vehicle/ModelService";
 import {GenerationService} from "service/spareparts/vehicle/GenerationService";
 
-interface VehiclesSliceState {
+export interface VehiclesSliceState {
   makes: Make[];
   models: Model[];
   generations: Generation[];

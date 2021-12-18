@@ -1,14 +1,23 @@
 import {Axios} from "core/axios";
 import {Make, ProcessMake} from "types/spareparts/vehicle/make";
-import {IncomingHttpHeaders} from "http";
+import {IncomingHttpHeaders, IncomingMessage} from "http";
+
+enum MakeRoutes {
+  ALL = "/all"
+}
 
 export class MakeService {
 
   private static readonly URL = '/make';
 
   static async getAll(headers?: IncomingHttpHeaders): Promise<Make[]> {
-    const {data: makes} = await Axios.get<Make[]>(this.URL, {headers});
+    const {data: makes} = await Axios.get<Make[]>(this.URL + MakeRoutes.ALL, {headers});
     return makes;
+  }
+
+  static async getById(id: number | string, headers: IncomingHttpHeaders = {}): Promise<Make> {
+    const {data: make} = await Axios.get<Make>(`${this.URL}/${id}`, {headers});
+    return make;
   }
 
   static async add(processMake: ProcessMake): Promise<Make> {

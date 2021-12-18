@@ -26,12 +26,20 @@ public class GroupController {
     @Autowired private GroupService groupService;
     @Autowired private ProcessGroupMapper processGroupMapper;
 
-    @GetMapping("/{id}")
+    @GetMapping("/all/{id}")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
-    public ResponseEntity<?> getBySubcategory(@PathVariable("id") Long id) throws SubcategoryNotFoundException {
+    public ResponseEntity<?> getAll(@PathVariable("id") Long id) throws SubcategoryNotFoundException {
         List<Group> groups = groupService.getAllBySubcategory(id);
         List<GroupDto> groupDtos = groupMapper.toDto(groups);
         return ResponseEntity.ok(groupDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws GroupNotFoundException {
+        Group group = groupService.getById(id);
+        GroupDto groupDto = groupMapper.toDto(group);
+        return ResponseEntity.ok(groupDto);
     }
 
     @PutMapping

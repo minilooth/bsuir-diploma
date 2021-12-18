@@ -8,7 +8,7 @@ import {SubcategoryService} from "service/spareparts/catalog/SubcategoryService"
 import {GroupService} from "service/spareparts/catalog/GroupService";
 import {RootState} from "redux/store";
 
-interface CatalogsSliceState {
+export interface CatalogsSliceState {
   categories: Category[];
   subcategories: Subcategory[];
   groups: Group[];

@@ -17,7 +17,7 @@ public interface GenerationService {
     Generation update(ProcessGeneration processGeneration, Long id) throws GenerationNotFoundException;
     void delete(Generation generation);
     Generation delete(Long id) throws GenerationNotFoundException, ActionIsImpossibleException;
-    Optional<Generation> getById(Long id);
+    Generation getById(Long id) throws GenerationNotFoundException;
     List<Generation> getAllByModelSorted(Long id) throws ModelNotFoundException;
     List<Generation> getAllByModel(Long id) throws ModelNotFoundException;
     List<Generation> getAll();

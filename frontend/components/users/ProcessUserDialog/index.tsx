@@ -23,8 +23,8 @@ import {SnackbarErrorOptions, SnackbarSuccessOptions} from "core/snackbar/snackb
 import {Form} from "components/common/Form";
 import {Image} from "types/image";
 import {UserService} from "service/UserService";
-import {useTypedDispatch} from "redux/hooks";
-import {getAll} from "redux/slices/usersSlice";
+import {useTypedDispatch, useTypedSelector} from "redux/hooks";
+import {getAll, selectAuthority, setCurrentUser} from "redux/slices/usersSlice";
 import {useQuery} from "core/hooks/useQuery";
 import {MaskedInput} from 'components/common/MaskedInput';
 import {yupResolver} from "@hookform/resolvers/yup";
@@ -42,6 +42,7 @@ interface ProcessUserDialogProps {
   open: boolean;
   onClose: () => void;
   user?: User;
+  self?: boolean;
 }
 
 interface ProcessUserFormData {
@@ -55,7 +56,7 @@ interface ProcessUserFormData {
   role: string;
 }
 
-export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClose, user}) => {
+export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClose, user, self}) => {
   const [loaders, setLoaders] = React.useState({upload: false, save: false})
   const {enqueueSnackbar} = useSnackbar();
   const dispatch = useTypedDispatch();
@@ -75,6 +76,7 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
     resolver: yupResolver(ProcessUserSchema)
   })
 
+  const currentRole = useTypedSelector(selectAuthority);
   const avatar = watch("avatar");
 
   const toggleLoader = (loader: ProcessDialogLoader) => {
@@ -122,14 +124,25 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
     toggleLoader(ProcessDialogLoader.SAVE);
     try {
       if (user) {
-        const {id} = user;
-        await UserService.update(id, data);
-        enqueueSnackbar('Пользователь успешно обновлен', SnackbarSuccessOptions);
+        if (self) {
+          const user = await UserService.updateProfile(other as User);
+          await dispatch(setCurrentUser(user));
+          if (currentRole && [RoleEnum.ADMIN].includes(currentRole.authority)) {
+            await dispatch(getAll({query: values}));
+          }
+          enqueueSnackbar('Профиль успешно обновлен', SnackbarSuccessOptions);
+        }
+        else {
+          const {id} = user;
+          await UserService.update(id, data);
+          enqueueSnackbar('Пользователь успешно обновлен', SnackbarSuccessOptions);
+          await dispatch(getAll({query: values}));
+        }
       } else {
         await UserService.save(data);
         enqueueSnackbar('Пользователь успешно сохранен', SnackbarSuccessOptions);
+        await dispatch(getAll({query: values}));
       }
-      await dispatch(getAll({query: values}));
       onClose();
     } catch (err) {
       enqueueSnackbar(getAxiosErrorData(err), SnackbarErrorOptions);
@@ -165,7 +178,7 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
       <DialogTitle className="d-flex justify-between align-center">
         <Typography variant="h4" className="d-flex align-center">
           <AccountBox fontSize="inherit" className="mr-10"/>
-          {user ? 'Редактирование пользователя' : 'Добавление пользователя'}
+          {user ? `Редактирование ${self ? 'профиля' : 'пользователя'}` : 'Добавление пользователя'}
         </Typography>
         {!loaders.save && !loaders.upload && <CloseOutlined className="cu-p" onClick={onClose}/>}
       </DialogTitle>
@@ -193,30 +206,33 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
           <Box className={clsx(styles.formContainer)}>
             <Form className="d-flex flex-column align-center mt-20 mb-20" onSubmit={handleSubmit(onSubmit)}
                   id="process-form">
-              <Input
-                {...register('username')}
-                label={'Имя пользователя'}
-                placeholder={'Введите имя пользователя'}
-                className={"mb-10"}
-                inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
-                error={!!errors.username}
-                helperText={errors?.username?.message}
-              />
-              <Input
-                {...register('email')}
-                label={'E-mail'}
-                placeholder={'Введите E-mail'}
-                className={"mb-10"}
-                inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
-                error={!!errors.email}
-                helperText={errors?.email?.message}
-              />
-              <Box className="d-flex justify-between mb-10">
+              {!self && (
+                <Input
+                  {...register('username')}
+                  label={'Имя пользователя'}
+                  placeholder={'Введите имя пользователя'}
+                  className={"mb-10"}
+                  inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
+                  error={!!errors.username}
+                  helperText={errors?.username?.message}
+                />
+              )}
+              {!self && (
+                <Input
+                  {...register('email')}
+                  label={'E-mail'}
+                  placeholder={'Введите E-mail'}
+                  className={"mb-10"}
+                  inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
+                  error={!!errors.email}
+                  helperText={errors?.email?.message}
+                />
+              )}
+              <Stack direction={self ? "column" : "row"} spacing={1} className={"mb-10 wp-100"}>
                 <Input
                   {...register('firstname')}
                   label={'Имя'}
                   placeholder={'Введите имя'}
-                  className={"mr-10"}
                   inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
                   error={!!errors.firstname}
                   helperText={errors?.firstname?.message}
@@ -225,7 +241,6 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
                   {...register('lastname')}
                   label={'Фамилия'}
                   placeholder={'Введите фамилию'}
-                  className={"mr-10 ml-10"}
                   inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
                   error={!!errors.lastname}
                   helperText={errors?.lastname?.message}
@@ -234,12 +249,11 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
                   {...register('middlename')}
                   label={'Отчество'}
                   placeholder={'Введите отчество'}
-                  className={"ml-10"}
                   inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
                   error={!!errors.middlename}
                   helperText={errors?.middlename?.message}
                 />
-              </Box>
+              </Stack>
               <MaskedInput
                 control={control}
                 name={"phoneNumber"}
@@ -253,22 +267,24 @@ export const ProcessUserDialog: React.FC<ProcessUserDialogProps> = ({open, onClo
                 error={!!errors.phoneNumber}
                 helperText={errors?.phoneNumber?.message}
               />
-              <Dropdown
-                name={'role'}
-                control={control}
-                label={"Привелегия"}
-                defaultValue={''}
-                className={"mb-10"}
-                displayEmpty={true}
-                startAdornment={<InputAdornment position={"start"}/>}
-                error={!!errors.role}
-                helperText={errors?.role?.message}
-              >
-                <MenuItem value={''}>Выберите...</MenuItem>
-                {RoleItems.map((item, index) =>
-                  <MenuItem value={item.key} key={index}>{item.label}</MenuItem>
-                )}
-              </Dropdown>
+              {!self && (
+                <Dropdown
+                  name={'role'}
+                  control={control}
+                  label={"Привелегия"}
+                  defaultValue={''}
+                  className={"mb-10"}
+                  displayEmpty={true}
+                  startAdornment={<InputAdornment position={"start"}/>}
+                  error={!!errors.role}
+                  helperText={errors?.role?.message}
+                >
+                  <MenuItem value={''}>Выберите...</MenuItem>
+                  {RoleItems.map((item, index) =>
+                    <MenuItem value={item.key} key={index}>{item.label}</MenuItem>
+                  )}
+                </Dropdown>
+              )}
             </Form>
           </Box>
         </Stack>

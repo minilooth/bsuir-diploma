@@ -10,12 +10,14 @@ import by.minilooth.diploma.dto.stores.mapper.StoreListMapper;
 import by.minilooth.diploma.dto.stores.mapper.StoreMapper;
 import by.minilooth.diploma.exception.stores.StoreNotFoundException;
 import by.minilooth.diploma.models.bean.stores.Store;
+import by.minilooth.diploma.models.bean.users.Role;
 import by.minilooth.diploma.models.stores.ProcessStore;
 import by.minilooth.diploma.models.stores.StoreFilter;
 import by.minilooth.diploma.models.stores.StoreList;
 import by.minilooth.diploma.service.stores.StoreService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,7 @@ public class StoreController {
     @Autowired private StoreListMapper storeListMapper;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
     public ResponseEntity<?> getAll(@RequestBody StoreFilterDto storeFilterDto) {
         StoreFilter storeFilter = storeFilterMapper.toEntity(storeFilterDto);
         StoreList storeList = storeService.getAll(storeFilter);
@@ -41,6 +44,7 @@ public class StoreController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "')")
     public ResponseEntity<?> add(@RequestBody @Valid ProcessStoreDto processStoreDto) {
         ProcessStore processStore = processStoreMapper.toEntity(processStoreDto);
         Store store = storeService.save(processStore);
@@ -49,6 +53,7 @@ public class StoreController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "')")
     public ResponseEntity<?> update(@RequestBody @Valid ProcessStoreDto processStoreDto, @PathVariable("id") Long id)
             throws StoreNotFoundException {
         ProcessStore processStore = processStoreMapper.toEntity(processStoreDto);
@@ -58,6 +63,7 @@ public class StoreController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "')")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) throws StoreNotFoundException {
         Store store = storeService.delete(id);
         StoreDto storeDto = storeMapper.toDto(store);

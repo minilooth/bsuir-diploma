@@ -3,54 +3,81 @@ import {
   AnyAction,
   combineReducers,
   configureStore,
-  createReducer,
+  EnhancedStore, getDefaultMiddleware,
   ThunkAction
 } from "@reduxjs/toolkit";
-import {createWrapper, HYDRATE} from "next-redux-wrapper";
+import {createWrapper, HYDRATE, MakeStore} from "next-redux-wrapper";
+import * as _ from "lodash";
 
-import {usersReducer} from "redux/slices/usersSlice";
-import {registerReducer} from "redux/slices/registerSlice";
-import {loginReducer} from "redux/slices/loginSlice";
-import {vehiclesReducer} from "redux/slices/vehiclesSlice";
-import {catalogsReducer} from "redux/slices/catalogsSlice";
-import {modificationsReducer} from "redux/slices/modificationsSlice";
-import {manufacturersReducer} from "redux/slices/manufacturersSlice";
-import {storesReducer} from "redux/slices/storesSlice";
-import {sparePartsReducer} from "redux/slices/sparePartsSlice";
+import {usersReducer, UsersSliceState} from "redux/slices/usersSlice";
+import {loginReducer, LoginSliceState} from "redux/slices/loginSlice";
+import {vehiclesReducer, VehiclesSliceState} from "redux/slices/vehiclesSlice";
+import {catalogsReducer, CatalogsSliceState} from "redux/slices/catalogsSlice";
+import {modificationsReducer, ModificationsSliceState} from "redux/slices/modificationsSlice";
+import {manufacturersReducer, ManufacturersSliceState} from "redux/slices/manufacturersSlice";
+import {storesReducer, StoresSliceState} from "redux/slices/storesSlice";
+import {sparePartsReducer, SparePartsSliceState} from "redux/slices/sparePartsSlice";
+import {registerReducer, RegisterSliceState} from "redux/slices/register";
+import {snackbarReducer, SnackbarSliceState} from "redux/slices/snackbar";
 
-const combinedReducers = combineReducers({
-  users: usersReducer,
-  register: registerReducer,
-  login: loginReducer,
-  vehicles: vehiclesReducer,
-  catalogs: catalogsReducer,
-  modifications: modificationsReducer,
-  manufacturers: manufacturersReducer,
-  stores: storesReducer,
-  spareParts: sparePartsReducer
-})
+interface State {
+  users: UsersSliceState,
+  register: RegisterSliceState,
+  login: LoginSliceState,
+  vehicles: VehiclesSliceState,
+  catalogs: CatalogsSliceState,
+  modifications: ModificationsSliceState,
+  manufacturers: ManufacturersSliceState,
+  stores: StoresSliceState,
+  spareParts: SparePartsSliceState,
+  snackbar: SnackbarSliceState
+}
 
-const rootReducer = createReducer(combinedReducers(undefined, {type: ""}), (builder) => {
-  builder
-    .addCase(HYDRATE, (state, action: AnyAction) => {
-      return {...state, ...action.payload};
-      // if (state.users.initialized) {
-      //   nextState.users.initialized = state.users.initialized;
-      //   nextState.users.current = state.users.current;
-      // }
-      // return nextState;
-    })
-    .addDefaultCase(combinedReducers);
-});
+const rootReducer = (state: State | undefined, action: AnyAction) => {
+  switch (action.type) {
+    case HYDRATE:
+      const nextState = {
+        ...state,
+        ...action.payload
+      };
+      if (state?.users.current && !action.payload.users.current) {
+        nextState.users.current = state.users.current;
+      }
+      if (state && state?.snackbar.removed.length != action.payload.snackbar.removed.length) {
+        nextState.snackbar.notifications = _.uniqBy([...state.snackbar.notifications, ...action.payload.snackbar.notifications], 'key');
+        nextState.snackbar.removed = _.uniq([...state.snackbar.removed, ...action.payload.snackbar.removed]);
+      }
+      return nextState;
+    default:
+      const combineReducer = combineReducers({
+          users: usersReducer,
+          register: registerReducer,
+          login: loginReducer,
+          vehicles: vehiclesReducer,
+          catalogs: catalogsReducer,
+          modifications: modificationsReducer,
+          manufacturers: manufacturersReducer,
+          stores: storesReducer,
+          spareParts: sparePartsReducer,
+          snackbar: snackbarReducer
+      })
+      return combineReducer(state, action);
+  }
+}
 
-export const store = configureStore({
+const devMode = process.env.NODE_ENV === 'development';
+
+const store = configureStore({
   reducer: rootReducer,
-  // devTools: process.env.NODE_ENV !== 'production',
+  middleware: [...getDefaultMiddleware()],
+  devTools: devMode
 })
 
-const makeStore = () => store;
+const setupStore = (context: any): EnhancedStore => store;
 
-export type AppStore = ReturnType<typeof makeStore>;
+const makeStore: MakeStore<any> = (context) => setupStore(context);
+
+export type AppStore = typeof store;
 export type RootState = ReturnType<AppStore['getState']>
 export type AppDispatch = AppStore['dispatch'];
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;

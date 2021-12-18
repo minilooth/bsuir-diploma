@@ -38,13 +38,6 @@ public class SparePartController {
         return ResponseEntity.ok(sparePartListDto);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAll() {
-        List<SparePart> sparePartList = sparePartService.getAll();
-        List<SparePartDto> sparePartDtos = sparePartMapper.toDto(sparePartList);
-        return ResponseEntity.ok(sparePartDtos);
-    }
-
     @PutMapping
     @PreAuthorize("hasRole('" + Role.ADMIN + "')")
     public ResponseEntity<?> add(@RequestBody ProcessSparePartDto processSparePartDto)

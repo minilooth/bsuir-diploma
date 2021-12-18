@@ -44,6 +44,7 @@ import styles from "components/stores/ProcessStoreDialog/ProcessStoreDialog.modu
 import {yupResolver} from "@hookform/resolvers/yup";
 import {StoreSchema} from "schemas/store";
 import {LoadingButton} from "@mui/lab";
+import {AddressesDialog} from "components/stores/AddressesDialog";
 
 interface ProcessStoreDialogProps {
   open: boolean;
@@ -74,11 +75,16 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
     },
     resolver: yupResolver(StoreSchema)
   })
+  const [addressesDialogOpened, setAddressesDialogOpened] = React.useState(false);
 
   const image = watch("image");
 
   const toggleUploadLoader = () => {
     setIsImageUploading((prev) => !prev);
+  }
+
+  const toggleAddressesDialog = () => {
+    setAddressesDialogOpened((prev) => !prev);
   }
 
   const onAvatarChanged = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -169,7 +175,7 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
       </DialogTitle>
       <DialogContent>
         <Stack direction={"row"} spacing={2}>
-          <Box className={clsx("d-flex flex-column justify-center wp-100")}>
+          <Box className={clsx("d-flex flex-column justify-center w-500")}>
             <Box className={clsx("d-flex justify-center", styles.imageWrapper)}>
               <NextImage src={getStoreImageUrl(image)} alt={'Магазин'} layout="fill" objectFit="cover"/>
             </Box>
@@ -201,7 +207,7 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
               )}
             </Stack>
           </Box>
-          <Box className={"wp-100"}>
+          <Box className={"w-500"}>
             <Form className="d-flex flex-column align-center" onSubmit={handleSubmit(onSubmit)}
                   id="process-form">
               <Input
@@ -235,7 +241,7 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
                   control={control}
                   label={"Адрес"}
                   defaultValue={''}
-                  className={"mb-10"}
+                  className={"mb-10 w-250"}
                   displayEmpty={true}
                   startAdornment={<InputAdornment position={"start"}/>}
                   error={!!errors.address}
@@ -249,6 +255,7 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
                 <IconButton
                   component={"span"}
                   size={"small"}
+                  onClick={toggleAddressesDialog}
                 >
                   <AddOutlined/>
                 </IconButton>
@@ -280,6 +287,12 @@ export const ProcessStoreDialog: React.FC<ProcessStoreDialogProps> = ({open, onC
           loadingPosition={"start"}
         >Сохранить</LoadingButton>
       </DialogActions>
+      {addressesDialogOpened &&
+      <AddressesDialog
+        open={addressesDialogOpened}
+        onClose={toggleAddressesDialog}
+      />
+      }
     </Dialog>
   );
 };

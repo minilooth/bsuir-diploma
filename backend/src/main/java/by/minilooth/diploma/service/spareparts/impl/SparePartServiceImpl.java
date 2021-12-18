@@ -1,11 +1,15 @@
 package by.minilooth.diploma.service.spareparts.impl;
 
 import by.minilooth.diploma.common.enums.*;
+import by.minilooth.diploma.exception.ActionIsImpossibleException;
+import by.minilooth.diploma.exception.spareparts.AvailabilityNotFoundException;
 import by.minilooth.diploma.exception.spareparts.SparePartAlreadyExistsException;
 import by.minilooth.diploma.exception.spareparts.SparePartNotFoundException;
+import by.minilooth.diploma.models.bean.cart.Cart;
 import by.minilooth.diploma.models.bean.catalog.Category;
 import by.minilooth.diploma.models.bean.catalog.Group;
 import by.minilooth.diploma.models.bean.catalog.Subcategory;
+import by.minilooth.diploma.models.bean.common.Image;
 import by.minilooth.diploma.models.bean.keys.AvailabilityKey;
 import by.minilooth.diploma.models.bean.keys.CharacteristicKey;
 import by.minilooth.diploma.models.bean.spareparts.Characteristic;
@@ -21,6 +25,8 @@ import by.minilooth.diploma.models.spareparts.ProcessSparePart;
 import by.minilooth.diploma.models.spareparts.SparePartFilter;
 import by.minilooth.diploma.models.spareparts.SparePartList;
 import by.minilooth.diploma.repository.spareparts.SparePartRepository;
+import by.minilooth.diploma.service.cart.CartService;
+import by.minilooth.diploma.service.common.ImageService;
 import by.minilooth.diploma.service.spareparts.ModificationService;
 import by.minilooth.diploma.service.spareparts.SparePartService;
 import by.minilooth.diploma.service.stores.StoreService;
@@ -39,6 +45,7 @@ public class SparePartServiceImpl implements SparePartService {
     @Autowired private SparePartRepository sparePartRepository;
     @Autowired private StoreService storeService;
     @Autowired private ModificationService modificationService;
+    @Autowired private CartService cartService;
 
     @Override
     public void save(SparePart sparePart) {
@@ -64,6 +71,7 @@ public class SparePartServiceImpl implements SparePartService {
                 .category(processSparePart.getCategory())
                 .subcategory(processSparePart.getSubcategory())
                 .group(processSparePart.getGroup())
+                .image(processSparePart.getImage())
                 .build();
         Set<Availability> availabilities = storeService.getAll().stream().map(s -> {
             AvailabilityKey key = AvailabilityKey.builder()
@@ -105,7 +113,7 @@ public class SparePartServiceImpl implements SparePartService {
     @Override
     public SparePart update(ProcessSparePart processSparePart, Long id) throws SparePartNotFoundException,
             SparePartAlreadyExistsException {
-        SparePart sparePart = getById(id).orElseThrow(() -> new SparePartNotFoundException(id));
+        SparePart sparePart = getById(id);
 
         if (!processSparePart.getArticle().equals(sparePart.getArticle()) && (Objects.isNull(sparePart.getArticle()) ||
                 existsByArticle(processSparePart.getArticle()))) {
@@ -124,6 +132,7 @@ public class SparePartServiceImpl implements SparePartService {
         sparePart.setCategory(processSparePart.getCategory());
         sparePart.setSubcategory(processSparePart.getSubcategory());
         sparePart.setGroup(processSparePart.getGroup());
+
         List<Modification> modifications = modificationService.getAllByIds(processSparePart.getCharacteristics()
                 .stream().map(c -> c.getModification().getId()).collect(Collectors.toList()));
         Set<Characteristic> characteristics = processSparePart.getCharacteristics().stream().map(c -> {
@@ -143,28 +152,57 @@ public class SparePartServiceImpl implements SparePartService {
             }
             return null;
         }).filter(Objects::nonNull).collect(Collectors.toSet());
+
         sparePart.setCharacteristics(characteristics);
+        sparePart.setImage(processSparePart.getImage());
         save(sparePart);
         return sparePart;
     }
 
     @Override
     public SparePart updateAvailability(List<Availability> availabilities, Long id) throws SparePartNotFoundException {
-        SparePart sparePart = getById(id).orElseThrow(() -> new SparePartNotFoundException(id));
+        SparePart sparePart = getById(id);
         sparePart.setAvailabilities(sparePart.getAvailabilities().stream().peek(availability -> {
             Availability newAvailability = availabilities.stream().filter(item -> item.getId().equals(availability.getId()))
                     .findAny().orElse(null);
             availability.setQuantity(Objects.nonNull(newAvailability)
                     ? newAvailability.getQuantity()
                     : availability.getQuantity());
+            List<Cart> carts = cartService.getAllBySparePart(sparePart);
+            carts.forEach(c -> c.setItems(c.getItems().stream().peek(i -> {
+                if (Objects.equals(i.getSparePart().getId(), availability.getSparePart().getId()) &&
+                        Objects.equals(i.getStore().getId(), availability.getStore().getId()) &&
+                        i.getQuantity() > availability.getQuantity()) {
+                    i.setQuantity(availability.getQuantity());
+                }
+            }).collect(Collectors.toSet())));
+            cartService.save(carts);
         }).collect(Collectors.toSet()));
         save(sparePart);
         return sparePart;
     }
 
     @Override
+    public void updateAvailability(SparePart sparePart, Store store, Long quantity)
+            throws ActionIsImpossibleException, AvailabilityNotFoundException {
+        Set<Availability> availabilities = sparePart.getAvailabilities();
+        Availability availability = availabilities.stream()
+                .filter(a -> Objects.equals(a.getSparePart().getId(), sparePart.getId()) &&
+                             Objects.equals(a.getStore().getId(), store.getId())).findAny()
+                .orElseThrow(() -> new AvailabilityNotFoundException(sparePart.getId(), store.getId()));
+
+        if (availability.getQuantity() < quantity) {
+            throw new ActionIsImpossibleException(String.format("Товара с ID %d в наличии только %d шт.",
+                    sparePart.getId(), availability.getQuantity()));
+        }
+        availability.setQuantity(availability.getQuantity() - quantity);
+
+        save(sparePart);
+    }
+
+    @Override
     public SparePart delete(Long id) throws SparePartNotFoundException {
-        SparePart sparePart = getById(id).orElseThrow(() -> new SparePartNotFoundException(id));
+        SparePart sparePart = getById(id);
         delete(sparePart);
         return sparePart;
     }
@@ -175,8 +213,8 @@ public class SparePartServiceImpl implements SparePartService {
     }
 
     @Override
-    public Optional<SparePart> getById(Long id){
-        return sparePartRepository.findById(id);
+    public SparePart getById(Long id) throws SparePartNotFoundException{
+        return sparePartRepository.findById(id).orElseThrow(() -> new SparePartNotFoundException(id));
     }
 
     @Override
@@ -199,80 +237,80 @@ public class SparePartServiceImpl implements SparePartService {
         }
 
         Long manufacturerId = filter.getManufacturerId();
-        if (Objects.nonNull(manufacturerId)) {
+        if (Objects.nonNull(manufacturerId) && manufacturerId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getManufacturer().getId().equals(manufacturerId));
         }
 
         String article = filter.getArticle();
-        if (Objects.nonNull(article)) {
+        if (Objects.nonNull(article) && !article.isEmpty()) {
             sparePartStream = sparePartStream.filter(s -> s.getArticle().equals(article));
         }
 
-        String description = filter.getDescription();
-        if (Objects.nonNull(description) && !description.isEmpty()) {
-            sparePartStream = sparePartStream.filter(s -> s.getDescription().startsWith(description));
-        }
-
         Float purchasePriceFrom = filter.getPurchasePriceFrom();
-        if (Objects.nonNull(purchasePriceFrom)) {
+        if (Objects.nonNull(purchasePriceFrom) && purchasePriceFrom != 0.0) {
             sparePartStream = sparePartStream.filter(s -> s.getPurchasePrice() >= purchasePriceFrom);
         }
 
         Float purchasePriceTo = filter.getPurchasePriceTo();
-        if (Objects.nonNull(purchasePriceTo)) {
+        if (Objects.nonNull(purchasePriceTo) && purchasePriceTo != 0.0) {
             sparePartStream = sparePartStream.filter(s -> s.getPurchasePrice() <= purchasePriceTo);
         }
 
         Float retailPriceFrom = filter.getRetailPriceFrom();
-        if (Objects.nonNull(retailPriceFrom)) {
+        if (Objects.nonNull(retailPriceFrom) && retailPriceFrom != 0.0) {
             sparePartStream = sparePartStream.filter(s -> s.getRetailPrice() >= retailPriceFrom);
         }
 
         Float retailPriceTo = filter.getRetailPriceTo();
-        if (Objects.nonNull(retailPriceTo)) {
+        if (Objects.nonNull(retailPriceTo) && retailPriceTo != 0.0) {
             sparePartStream = sparePartStream.filter(s -> s.getRetailPrice() <= retailPriceTo);
         }
 
         Long availabilityFrom = filter.getAvailabilityFrom();
-        if (Objects.nonNull(availabilityFrom)) {
+        if (Objects.nonNull(availabilityFrom) && availabilityFrom != 0.0) {
             sparePartStream = sparePartStream.filter(s -> s.getAvailabilities().stream()
                     .mapToLong(Availability::getQuantity).sum() >= availabilityFrom);
         }
 
         Long availabilityTo = filter.getAvailabilityTo();
-        if (Objects.nonNull(availabilityTo)) {
+        if (Objects.nonNull(availabilityTo) && availabilityTo != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getAvailabilities().stream()
                     .mapToLong(Availability::getQuantity).sum() <= availabilityTo);
         }
 
         Long makeId = filter.getMakeId();
-        if (Objects.nonNull(makeId)) {
+        if (Objects.nonNull(makeId) && makeId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getMake().getId().equals(makeId));
         }
 
         Long modelId = filter.getModelId();
-        if (Objects.nonNull(modelId)) {
+        if (Objects.nonNull(modelId) && modelId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getModel().getId().equals(modelId));
         }
 
         Long generationId = filter.getGenerationId();
-        if (Objects.nonNull(generationId)) {
+        if (Objects.nonNull(generationId) && generationId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getGeneration().getId().equals(generationId));
         }
 
         Long categoryId = filter.getCategoryId();
-        if (Objects.nonNull(categoryId)) {
+        if (Objects.nonNull(categoryId) && categoryId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getCategory().getId().equals(categoryId));
         }
 
         Long subcategoryId = filter.getSubcategoryId();
-        if (Objects.nonNull(subcategoryId)) {
+        if (Objects.nonNull(subcategoryId) && subcategoryId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getSubcategory().getId().equals(subcategoryId));
         }
 
         Long groupId = filter.getGroupId();
-        if (Objects.nonNull(groupId)) {
+        if (Objects.nonNull(groupId) && groupId != 0) {
             sparePartStream = sparePartStream.filter(s -> s.getGroup().getId().equals(groupId));
+        }
+
+        String search = filter.getSearch();
+        if (Objects.nonNull(search) && !search.isEmpty()) {
+            sparePartStream = sparePartStream.filter(s -> s.getName().startsWith(search));
         }
 
         List<SparePart> spareParts = sparePartStream.collect(Collectors.toList());

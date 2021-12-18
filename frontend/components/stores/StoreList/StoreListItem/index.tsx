@@ -1,5 +1,5 @@
 import React from 'react';
-import {Store, StoreTypes} from "types/stores/store";
+import {Store, StoreType, StoreTypes} from "types/stores/store";
 import {Box, Button, Card, CardActions, CardContent, CardMedia, Grid, Typography} from "@mui/material";
 import clsx from "clsx";
 import Image from "next/image";
@@ -70,6 +70,8 @@ export const StoreListItem: React.FC<StoreListItemProps> = ({store}) => {
     }
   }
 
+  console.log(type as StoreType);
+
   return (
     <Grid item xs={4}>
       <Card>
@@ -86,7 +88,7 @@ export const StoreListItem: React.FC<StoreListItemProps> = ({store}) => {
           <Typography variant="body2" color="text.secondary">
             Тип: {StoreTypes.find(t => t.key === type)?.label}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{height: '30px'}}>
             Адрес: {address.full}
           </Typography>
         </CardContent>

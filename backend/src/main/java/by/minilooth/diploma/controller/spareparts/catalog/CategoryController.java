@@ -25,12 +25,20 @@ public class CategoryController {
     @Autowired private CategoryMapper categoryMapper;
     @Autowired private ProcessCategoryMapper processCategoryMapper;
 
-    @GetMapping
+    @GetMapping("/all")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
     public ResponseEntity<?> getAll() {
         List<Category> categories = categoryService.getAll();
         List<CategoryDto> categoryDtos = categoryMapper.toDto(categories);
         return ResponseEntity.ok(categoryDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws CategoryNotFoundException {
+        Category category = categoryService.getById(id);
+        CategoryDto categoryDto = categoryMapper.toDto(category);
+        return ResponseEntity.ok(categoryDto);
     }
 
     @PutMapping

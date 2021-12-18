@@ -8,6 +8,7 @@ import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import {theme} from "theme/theme"
 import {wrapper} from "redux/store";
 import {InitializeLayout} from "components/layouts/InitializeLayout";
+import {Notifier} from "components/layouts/Notifier";
 
 import 'styles/globals.scss'
 
@@ -18,9 +19,11 @@ function MyApp(appProps: AppProps) {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <ThemeProvider theme={theme}>
-        <SnackbarProvider maxSnack={3}>
+        <SnackbarProvider maxSnack={3} preventDuplicate={true}>
           <InitializeLayout user={user}>
-            <Component {...pageProps} />
+            <Notifier>
+              <Component {...pageProps} />
+            </Notifier>
           </InitializeLayout>
         </SnackbarProvider>
       </ThemeProvider>

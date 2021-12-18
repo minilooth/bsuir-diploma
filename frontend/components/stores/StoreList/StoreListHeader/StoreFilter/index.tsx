@@ -12,7 +12,7 @@ import {
 import {CloseOutlined, FilterAlt} from "@mui/icons-material";
 import {Form} from "components/common/Form";
 import {Dropdown} from "components/common/Dropdown";
-import {SortDirection} from "types/common/sort-direction";
+import {SortDirection, SortDirections} from "types/common/sort-direction";
 import {StoreSort, StoreSortItems, StoreType, StoreTypes} from "types/stores/store";
 import {useQuery} from "core/hooks/useQuery";
 import {useForm} from "react-hook-form";
@@ -53,9 +53,9 @@ export const StoreFilter: React.FC<StoreFilterProps> = ({open, onClose}) => {
   const onSubmit = async (data: StoreFilterData) => {
     const {sort: sortField, sortDirection, type, addressId} = data;
     appendToQuery({
-      sort: sortField?.toString(),
-      sortDirection: sortDirection?.toString(),
-      type: type?.toString(),
+      sort: sortField,
+      sortDirection: sortDirection,
+      type: type,
       addressId: addressId?.toString()
     })
     await push();
@@ -106,8 +106,8 @@ export const StoreFilter: React.FC<StoreFilterProps> = ({open, onClose}) => {
                 helperText={errors?.sortDirection?.message}
               >
                 <MenuItem value={''}>Выберите...</MenuItem>
-                {Object.entries(SortDirection).map(([key, value], index) =>
-                  <MenuItem value={key} key={index}>{value}</MenuItem>
+                {SortDirections.map((item, index) =>
+                  <MenuItem value={item.query} key={index}>{item.label}</MenuItem>
                 )}
               </Dropdown>
             )}
@@ -123,8 +123,8 @@ export const StoreFilter: React.FC<StoreFilterProps> = ({open, onClose}) => {
             helperText={errors?.type?.message}
           >
             <MenuItem value={''}>Выберите...</MenuItem>
-            {StoreTypes.map(({key, label}, index) =>
-              <MenuItem value={key} key={index}>{label}</MenuItem>
+            {StoreTypes.map((item, index) =>
+              <MenuItem value={item.query} key={index}>{item.label}</MenuItem>
             )}
           </Dropdown>
           <Dropdown

@@ -1,11 +1,13 @@
 package by.minilooth.diploma.service.users.impl;
 
+import by.minilooth.diploma.exception.users.AuthorityNotFoundException;
 import by.minilooth.diploma.exception.users.UserAlreadyExistsException;
 import by.minilooth.diploma.exception.users.UserNotFoundException;
 import by.minilooth.diploma.models.LoginParams;
-import by.minilooth.diploma.models.RegisterParams;
+import by.minilooth.diploma.models.bean.cart.Cart;
 import by.minilooth.diploma.models.bean.users.ConfirmationToken;
 import by.minilooth.diploma.models.RestorePasswordParams;
+import by.minilooth.diploma.models.bean.users.Role;
 import by.minilooth.diploma.security.jwt.JwtUtils;
 import by.minilooth.diploma.service.common.MailService;
 import by.minilooth.diploma.service.users.AuthService;
@@ -30,9 +32,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -64,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userService.getByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("Не удалось найти пользователя с именем пользователя: " + username));
     }
 
     private Cookie getTokenCookie(String token) {
@@ -103,45 +105,54 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User register(RegisterParams params) throws UserAlreadyExistsException {
-        if (StringUtils.isEmpty(params.getUsername()) || userService.existsByUsername(params.getUsername())) {
-            throw new UserAlreadyExistsException("User with provided username is already exists");
+    public User register(User user) throws UserAlreadyExistsException, AuthorityNotFoundException {
+        if (StringUtils.isEmpty(user.getUsername()) || userService.existsByUsername(user.getUsername())) {
+            throw new UserAlreadyExistsException("Пользователь с таким именем пользователя уже существует");
         }
 
-        if (StringUtils.isEmpty(params.getEmail()) || userService.existsByEmail(params.getEmail())) {
-            throw new UserAlreadyExistsException("User with provided e-mail is already exists");
+        if (StringUtils.isEmpty(user.getEmail()) || userService.existsByEmail(user.getEmail())) {
+            throw new UserAlreadyExistsException("Пользователь с таким e-mail уже существует");
         }
 
-        if (StringUtils.isEmpty(params.getPhoneNumber()) || userService.existsByPhoneNumber(params.getPhoneNumber())) {
-            throw new UserAlreadyExistsException("User with provided phone number is already exists");
+        if (StringUtils.isEmpty(user.getPhoneNumber()) || userService.existsByPhoneNumber(user.getPhoneNumber())) {
+            throw new UserAlreadyExistsException("Пользователь с таким номером телефона уже существует");
         }
 
         String password = RandomStringUtils.randomAlphanumeric(GENERATED_PASSWORD_LENGTH);
 
-        User user = User.builder()
-                .username(params.getUsername())
-                .email(params.getEmail())
+        Set<Role> authorities = Collections.singleton(roleService.getByAuthority(Role.EMPLOYEE)
+                .orElseThrow(() -> new AuthorityNotFoundException(Role.EMPLOYEE)));
+
+        User registeredUser = User.builder()
+                .firstname(user.getFirstname())
+                .lastname(user.getLastname())
+                .middlename(user.getMiddlename())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
                 .password(passwordEncoder.encode(password))
-                .authorities(new HashSet<>(roleService.getAll()))
+                .authorities(authorities)
+                .isAccountNonDisabled(false)
+                .cart(Cart.builder().build())
                 .build();
 
-        userService.save(user);
+        userService.save(registeredUser);
 
         ConfirmationToken token = ConfirmationToken.builder()
-                .user(user)
+                .user(registeredUser)
                 .token(UUID.randomUUID().toString())
                 .build();
 
         confirmationTokenService.save(token);
-        mailService.sendConfirmRegisterMain(user, password, token);
+        mailService.sendConfirmRegisterMain(registeredUser, password, token);
 
-        return user;
+        return registeredUser;
     }
 
     @Override
     public void restorePassword(RestorePasswordParams params) throws UserNotFoundException {
         User user = userService.getByEmail(params.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("User with provided e-mail not found"));
+                .orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя с таким e-mail"));
 
         String password = RandomStringUtils.randomAlphanumeric(GENERATED_PASSWORD_LENGTH);
 
@@ -169,7 +180,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Boolean isRestorePasswordAllowed(String email) throws UserNotFoundException {
         User user = userService.getByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with provided e-mail not found"));
+                .orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя с таким e-mail"));
         return user.getIsEmailConfirmed();
     }
 

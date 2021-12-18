@@ -1,6 +1,7 @@
 package by.minilooth.diploma.dto.spareparts.mapper;
 
 import by.minilooth.diploma.common.api.mapper.AbstractMapper;
+import by.minilooth.diploma.dto.mapper.ImageMapper;
 import by.minilooth.diploma.dto.spareparts.ProcessSparePartDto;
 import by.minilooth.diploma.dto.spareparts.catalog.mapper.CategoryMapper;
 import by.minilooth.diploma.dto.spareparts.catalog.mapper.GroupMapper;
@@ -26,6 +27,7 @@ public class ProcessSparePartMapper extends AbstractMapper<ProcessSparePart, Pro
     @Autowired private CategoryMapper categoryMapper;
     @Autowired private SubcategoryMapper subcategoryMapper;
     @Autowired private GroupMapper groupMapper;
+    @Autowired private ImageMapper imageMapper;
 
     public ProcessSparePartMapper() {
         super(ProcessSparePart.class, ProcessSparePartDto.class);
@@ -43,6 +45,7 @@ public class ProcessSparePartMapper extends AbstractMapper<ProcessSparePart, Pro
                     m.skip(ProcessSparePart::setCategory);
                     m.skip(ProcessSparePart::setSubcategory);
                     m.skip(ProcessSparePart::setGroup);
+                    m.skip(ProcessSparePart::setImage);
                 }).setPostConverter(toEntityConverter());
     }
 
@@ -56,6 +59,7 @@ public class ProcessSparePartMapper extends AbstractMapper<ProcessSparePart, Pro
         destination.setCategory(categoryMapper.toEntity(source.getCategory()));
         destination.setSubcategory(subcategoryMapper.toEntity(source.getSubcategory()));
         destination.setGroup(groupMapper.toEntity(source.getGroup()));
+        destination.setImage(imageMapper.toEntity(source.getImage()));
     }
 
 }

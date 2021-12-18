@@ -5,7 +5,9 @@ import {Axios} from "core/axios";
 enum UserServiceRoutes {
   GET_ALL = '/all',
   LOCK = '/lock',
-  CHANGE_PASSWORD = '/password'
+  ENABLE = '/enable',
+  CHANGE_PASSWORD = '/password',
+  UPDATE_PROFILE = '/update-profile'
 }
 
 export class UserService {
@@ -37,8 +39,18 @@ export class UserService {
     return user;
   }
 
-  static async changePassword(data: ChangePassword, id: number): Promise<User> {
-    const {data: user} = await Axios.post<User>(`${this.URL + UserServiceRoutes.CHANGE_PASSWORD}/${id}`, data);
+  static async enable(id: number): Promise<User> {
+    const {data: user} = await Axios.post<User>(`${this.URL + UserServiceRoutes.ENABLE}/${id}`);
+    return user;
+  }
+
+  static async changePassword(data: ChangePassword, id?: number): Promise<User> {
+    const {data: user} = await Axios.post<User>(this.URL + UserServiceRoutes.CHANGE_PASSWORD + (id ? `/${id}` : ''), data);
+    return user;
+  }
+
+  static async updateProfile(data: User): Promise<User> {
+    const {data: user} = await Axios.post<User>(this.URL + UserServiceRoutes.UPDATE_PROFILE, data);
     return user;
   }
 

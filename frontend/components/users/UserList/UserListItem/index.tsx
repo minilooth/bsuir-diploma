@@ -1,5 +1,5 @@
 import React from 'react';
-import {Box, Button, Card, CardActions, CardContent, CardMedia, Grid, Typography} from "@mui/material";
+import {Box, Button, Card, CardActions, CardContent, CardMedia, Grid, Stack, Typography} from "@mui/material";
 import Image from "next/image";
 import clsx from "clsx";
 
@@ -18,10 +18,13 @@ import styles from 'components/users/UserList/UserListItem/UserListItem.module.s
 import {getAvatarUrl} from "utils/functions/getAvatarUrl";
 import {getAvatarAlt} from "utils/functions/getAvatarAlt";
 import {ChangePasswordDialog} from "components/users/ChangePasswordDialog";
+import {ErrorOutline} from "@mui/icons-material";
+import {ProfileDialog} from "components/users/ProfileDialog";
 
 enum UserDialog {
   PROCESS,
-  CHANGE_PASSWORD
+  CHANGE_PASSWORD,
+  PROFILE
 }
 
 interface UserListItemProps {
@@ -29,9 +32,10 @@ interface UserListItemProps {
 }
 
 export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
-  const {id, avatar, firstname, lastname, username, middlename, email, phoneNumber, roles, isAccountNonLocked} = user;
+  const {id, avatar, firstname, lastname, username, middlename, email, phoneNumber, roles, isAccountNonLocked,
+    isAccountNonDisabled} = user;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [dialogsState, setDialogStates] = React.useState({process: false, changePassword: false});
+  const [dialogsState, setDialogStates] = React.useState({process: false, changePassword: false, profile: false});
   const {enqueueSnackbar} = useSnackbar();
   const dispatch = useTypedDispatch();
   const {values} = useQuery();
@@ -56,6 +60,12 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
         setDialogStates((prev) => {
           return {...prev, changePassword: !prev.changePassword}
         })
+        break;
+      case UserDialog.PROFILE:
+        setDialogStates((prev) => ({
+          ...prev,
+          profile: !prev.profile
+        }))
         break;
       default:
         break;
@@ -83,6 +93,17 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
     }
   }
 
+  const onEnable = async () => {
+    try {
+      await UserService.enable(id);
+      enqueueSnackbar('Вы успешно подтвердили регистрацию пользователя', SnackbarSuccessOptions);
+      await dispatch(getAll({query: values}));
+    }
+    catch (err) {
+      enqueueSnackbar(getAxiosErrorData(err), SnackbarErrorOptions);
+    }
+  }
+
   const onActionClick = async (action?: UserAction) => {
     onCloseMenu();
     switch (action) {
@@ -94,6 +115,9 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
         break;
       case UserAction.LOCK:
         await onLock();
+        break;
+      case UserAction.ENABLE:
+        await onEnable();
         break;
       case UserAction.CHANGE_PASSWORD:
         toggleDialog(UserDialog.CHANGE_PASSWORD);
@@ -114,7 +138,9 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
         </CardMedia>
         <CardContent>
           <Typography gutterBottom variant="h4" component="div">
-            {firstname} {lastname} {middlename}
+            <Stack direction={"row"} alignItems={"center"}>
+              {!isAccountNonDisabled && (<ErrorOutline className={"mr-5"} fontSize={"inherit"} color={"error"}/>)}{firstname} {lastname} {middlename}
+            </Stack>
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Имя пользователя: {username}
@@ -130,7 +156,7 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
           </Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">Профиль</Button>
+          <Button size="small" onClick={() => toggleDialog(UserDialog.PROFILE)}>Профиль</Button>
           <Button size="small" onClick={onOpenMenu}>Еще</Button>
         </CardActions>
       </Card>
@@ -140,6 +166,7 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
           anchorEl={anchorEl}
           handleClose={onActionClick}
           locked={!isAccountNonLocked}
+          disabled={!isAccountNonDisabled}
         />
       )}
       {dialogsState.process && (
@@ -154,6 +181,13 @@ export const UserListItem: React.FC<UserListItemProps> = ({user}) => {
           isOldPasswordNeeded={false}
           open={dialogsState.changePassword}
           onClose={() => toggleDialog(UserDialog.CHANGE_PASSWORD)}
+          user={user}
+        />
+      )}
+      {user && dialogsState.profile && (
+        <ProfileDialog
+          open={dialogsState.profile}
+          onClose={() => toggleDialog(UserDialog.PROFILE)}
           user={user}
         />
       )}

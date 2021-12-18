@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
@@ -21,4 +22,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     List<Store> findAll();
     Boolean existsByAddress(Address address);
 
+    @QueryHints(value = {
+            @QueryHint(name = org.hibernate.jpa.QueryHints.HINT_PASS_DISTINCT_THROUGH, value = "false")
+    }, forCounting = false)
+    @Query(name = "Store.findById")
+    Optional<Store> findById(Long id);
 }

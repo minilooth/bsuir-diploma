@@ -17,7 +17,7 @@ public interface SubcategoryService {
     Subcategory update(ProcessSubcategory processSubcategory, Long id) throws SubcategoryNotFoundException;
     void delete(Subcategory subcategory);
     Subcategory delete(Long id) throws SubcategoryNotFoundException, ActionIsImpossibleException;
-    Optional<Subcategory> getById(Long id);
+    Subcategory getById(Long id) throws SubcategoryNotFoundException;
     List<Subcategory> getAll();
     List<Subcategory> getAllByCategory(Long id) throws CategoryNotFoundException;
     Boolean existsByCategory(Category category);

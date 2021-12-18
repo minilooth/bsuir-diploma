@@ -1,14 +1,14 @@
 import React, {ChangeEvent} from 'react';
-import {Box, Button, Chip, InputAdornment, Stack, Typography} from "@mui/material";
-import {Group, Search} from "@mui/icons-material";
+import {Box, Button, ButtonGroup, Chip, InputAdornment, Stack, Typography} from "@mui/material";
+import {Add, FilterList, Group, Search, Settings} from "@mui/icons-material";
 import {Input} from "components/common/Input";
 import {UserFilter} from "components/users/UserList/UserListHeader/UserFilter";
 import {SortItems} from "types/user";
 import {useForm} from "react-hook-form";
 import debounce from 'debounce'
 import {useQuery} from "core/hooks/useQuery";
-import {SortDirection} from "types/common/sort-direction";
-import {DateUtils} from "utils/DateUtils";
+import {SortDirection, SortDirections} from "types/common/sort-direction";
+import {DATE_FORMAT, DateUtils} from "utils/DateUtils";
 import {ProcessUserDialog} from "components/users/ProcessUserDialog";
 
 export const UserListHeader: React.FC = () => {
@@ -43,15 +43,15 @@ export const UserListHeader: React.FC = () => {
   }
 
   const sort = SortItems.find(i => i.query === values.sort)?.label;
-  const sortDirection = SortDirection[values.sortDirection as keyof typeof SortDirection]?.toLowerCase();
+  const sortDirection = SortDirections.find(i => i.query === values.sortDirection)?.label?.toLowerCase();
   const fullname = values.fullname;
   const email = values.email;
   const phoneNumber = values.phoneNumber;
   const registerDateFrom = values.registerDateFrom
-    ? DateUtils.formatFromNumber(values.registerDateFrom, 'dd/MM/yyyy')
+    ? DateUtils.format(Number(values.registerDateFrom), DATE_FORMAT.DATE)
     : null;
   const registerDateTo = values.registerDateTo
-    ? DateUtils.formatFromNumber(values.registerDateTo, 'dd/MM/yyyy')
+    ? DateUtils.format(Number(values.registerDateTo), DATE_FORMAT.DATE)
     : null;
 
   return (
@@ -77,8 +77,20 @@ export const UserListHeader: React.FC = () => {
       </Stack>
       <Stack direction="row" spacing={2} className="pt-20 pb-20 align-center">
         <Stack direction="row" spacing={1} className="align-center">
-          <Button variant="outlined" color="primary" className="w-100" onClick={toggleProcessDialog}>Добавить</Button>
-          <Button variant="outlined" color="primary" className="w-100" onClick={toggleFilterDialog}>Фильтр</Button>
+          <ButtonGroup color={"primary"} variant={"outlined"} size={"small"}>
+            <Button
+              startIcon={<Add/>}
+              onClick={toggleProcessDialog}
+            >
+              Добавить
+            </Button>
+            <Button
+              startIcon={<FilterList/>}
+              onClick={toggleFilterDialog}
+            >
+              Фильтр
+            </Button>
+          </ButtonGroup>
         </Stack>
         <Stack direction="row" spacing={1} className="super-scroll align-center">
           {sort && sortDirection && (

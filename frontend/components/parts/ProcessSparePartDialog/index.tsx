@@ -71,6 +71,8 @@ import {getSpareParts} from "redux/slices/sparePartsSlice";
 import {Generation} from "types/spareparts/vehicle/generation";
 import {Group} from "types/spareparts/catalog/group";
 import {Image} from "types/image";
+import {getCart} from "redux/slices/usersSlice";
+import {PartsSettingsDialog} from "components/parts/settings/PartsSettingsDialog";
 
 interface ProcessSparePartDialogProps {
   open: boolean;
@@ -98,6 +100,7 @@ interface ProcessSparePartDialogFormData {
 export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({open, onClose, sparePart}) => {
   const [isImageUploading, setIsImageUploading] = React.useState(false)
   const [selectModificationDialogOpened, setSelectModificationDialogOpened] = React.useState(false);
+  const [partsSettingsDialogOpened, setPartsSettingsDialogOpened] = React.useState(false);
   const {enqueueSnackbar} = useSnackbar();
   const {values} = useQuery();
   const dispatch = useTypedDispatch();
@@ -105,22 +108,22 @@ export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({o
     mode: "onChange",
     defaultValues: {
       name: sparePart?.name ?? '',
-      manufacturerId: sparePart?.manufacturer.id ?? '',
+      manufacturerId: sparePart?.manufacturer?.id ?? '',
       article: sparePart?.article ?? '',
       description: sparePart?.description ?? '',
       purchasePrice: sparePart?.purchasePrice ?? '',
       retailPrice: sparePart?.retailPrice ?? '',
       characteristics: sparePart?.characteristics ?? [],
-      makeId: sparePart?.make.id ?? '',
+      makeId: sparePart?.make?.id ?? '',
       hasModels: false,
-      modelId: sparePart?.model.id ?? '',
+      modelId: sparePart?.model?.id ?? '',
       hasGenerations: false,
-      generationId: sparePart?.generation.id ?? '',
-      categoryId: sparePart?.category.id ?? '',
+      generationId: sparePart?.generation?.id ?? '',
+      categoryId: sparePart?.category?.id ?? '',
       hasSubcategories: false,
-      subcategoryId: sparePart?.subcategory.id ?? '',
+      subcategoryId: sparePart?.subcategory?.id ?? '',
       hasGroups: false,
-      groupId: sparePart?.group.id ?? '',
+      groupId: sparePart?.group?.id ?? '',
       image: sparePart?.image ?? null
     },
     resolver: yupResolver(ProcessSparePartSchema)
@@ -213,14 +216,18 @@ export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({o
     onClose();
   }
 
+  const togglePartsSettingsDialog = () => {
+    setPartsSettingsDialogOpened((prev) => !prev);
+  }
+
   const onAddCharacteristic = (modification?: Modification) => {
+    toggleSelectModificationDialog();
     if (modification) {
       append({
         modification,
         value: ''
       });
     }
-    toggleSelectModificationDialog();
   }
 
   const toggleSelectModificationDialog = () => {
@@ -314,13 +321,15 @@ export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({o
 
     try {
       if (sparePart) {
-
+        await SparePartService.update(sparePart.id, process);
+        enqueueSnackbar('Запчасть успешно обновлена', SnackbarSuccessOptions);
       }
       else {
         await SparePartService.add(process);
         enqueueSnackbar('Запчасть успешно сохранена', SnackbarSuccessOptions);
       }
       await dispatch(getSpareParts({query: values}));
+      await dispatch(getCart());
       onCloseWrapper();
     }
     catch (err) {
@@ -329,12 +338,26 @@ export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({o
   }
 
   const onReset = () => {
-    // reset({
-    //   image: null,
-    //   type: '',
-    //   address: '',
-    //   name: ''
-    // })
+    reset({
+      name: '',
+      manufacturerId: '',
+      article: '',
+      description: '',
+      purchasePrice: '',
+      retailPrice: '',
+      characteristics: [],
+      makeId: '',
+      hasModels: false,
+      modelId: '',
+      hasGenerations: false,
+      generationId: '',
+      categoryId: '',
+      hasSubcategories: false,
+      subcategoryId: '',
+      hasGroups: false,
+      groupId: '',
+      image: null
+    })
   }
 
   const onDeleteImage = () => {
@@ -608,6 +631,7 @@ export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({o
                       <Button
                         startIcon={<AddOutlined/>}
                         disabled={isSubmitting || isImageUploading}
+                        onClick={togglePartsSettingsDialog}
                       >
                         Добавить
                       </Button>
@@ -671,6 +695,12 @@ export const ProcessSparePartDialog: React.FC<ProcessSparePartDialogProps> = ({o
           open={selectModificationDialogOpened}
           onClose={onAddCharacteristic}
           selected={characteristics.map(c => c.modification)}
+        />
+      )}
+      {partsSettingsDialogOpened && (
+        <PartsSettingsDialog
+          open={partsSettingsDialogOpened}
+          onClose={togglePartsSettingsDialog}
         />
       )}
     </>

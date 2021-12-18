@@ -45,7 +45,7 @@ public class Address extends AbstractEntity implements Comparable<Address> {
         }
 
         if (!Objects.isNull(room) && !room.isEmpty() && !room.isBlank()) {
-            sb.append(", кв. ").append(room);
+            sb.append(", ").append(room);
         }
 
         return sb.toString();

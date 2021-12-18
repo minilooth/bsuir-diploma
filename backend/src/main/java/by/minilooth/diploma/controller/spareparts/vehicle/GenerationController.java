@@ -26,12 +26,20 @@ public class GenerationController {
     @Autowired private GenerationMapper generationMapper;
     @Autowired private ProcessGenerationMapper processGenerationMapper;
 
-    @GetMapping("/{id}")
+    @GetMapping("/all/{id}")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
-    public ResponseEntity<?> getByModel(@PathVariable("id") Long id) throws ModelNotFoundException {
+    public ResponseEntity<?> getAll(@PathVariable("id") Long id) throws ModelNotFoundException {
         List<Generation> generations = generationService.getAllByModelSorted(id);
         List<GenerationDto> generationDtos = generationMapper.toDto(generations);
         return ResponseEntity.ok(generationDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws GenerationNotFoundException {
+        Generation generation = generationService.getById(id);
+        GenerationDto generationDto = generationMapper.toDto(generation);
+        return ResponseEntity.ok(generationDto);
     }
 
     @PutMapping

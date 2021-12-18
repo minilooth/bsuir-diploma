@@ -5,6 +5,7 @@ import by.minilooth.diploma.models.bean.users.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -16,8 +17,10 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = false)
 public class Deal extends AbstractEntity {
 
-    @OneToMany(mappedBy = "deal")
-    private Set<Trade> trades;
+    @OneToMany(mappedBy = "deal", targetEntity = Trade.class, cascade = {CascadeType.MERGE, CascadeType.PERSIST}, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    private Set<Trade> trades = new LinkedHashSet<>();
 
     @Column(name = "total_price", nullable = false)
     private Float totalPrice;

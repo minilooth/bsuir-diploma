@@ -1,25 +1,25 @@
 package by.minilooth.diploma.models.bean.keys;
 
+import by.minilooth.diploma.models.api.BaseEntity;
 import by.minilooth.diploma.models.bean.deals.Deal;
 import by.minilooth.diploma.models.bean.spareparts.SparePart;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Embeddable;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
 @EqualsAndHashCode
-public class TradeKey implements Serializable {
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class TradeKey implements Serializable, BaseEntity {
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "deal_id")
-    private Deal deal;
+    @Column(name = "deal_id")
+    private Long dealId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "spare_part_id")
-    private SparePart sparePart;
+    @Column(name = "spare_part_id")
+    private Long sparePartId;
 
 }

@@ -1,11 +1,12 @@
 import React from 'react';
 import {ListItemIcon, ListItemText, Menu, MenuItem} from "@mui/material";
-import {Delete, Edit, Lock, LockOpenOutlined, LockOutlined, VpnKeyOutlined} from "@mui/icons-material";
+import {Check, Delete, Edit, LockOpenOutlined, LockOutlined, VpnKeyOutlined} from "@mui/icons-material";
 
 export enum UserAction {
   EDIT,
   DELETE,
   LOCK,
+  ENABLE,
   CHANGE_PASSWORD
 }
 
@@ -14,9 +15,16 @@ interface UserListItemActionMenuProps {
   anchorEl: null | HTMLElement;
   handleClose: (action?: UserAction) => void;
   locked: boolean;
+  disabled: boolean;
 }
 
-export const UserListItemActionMenu: React.FC<UserListItemActionMenuProps> = ({open, anchorEl, handleClose, locked}) => {
+export const UserListItemActionMenu: React.FC<UserListItemActionMenuProps> = ({
+                                                                                open,
+                                                                                anchorEl,
+                                                                                handleClose,
+                                                                                locked,
+                                                                                disabled
+                                                                              }) => {
   return (
     <Menu
       anchorEl={anchorEl}
@@ -49,6 +57,14 @@ export const UserListItemActionMenu: React.FC<UserListItemActionMenuProps> = ({o
         </ListItemIcon>
         <ListItemText>{locked ? 'Разблокировать' : 'Заблокировать'}</ListItemText>
       </MenuItem>
+      {disabled && (
+        <MenuItem onClick={() => handleClose(UserAction.ENABLE)}>
+          <ListItemIcon>
+            <Check fontSize={"small"}/>
+          </ListItemIcon>
+          <ListItemText>Подтвердить регистрацию</ListItemText>
+        </MenuItem>
+      )}
       <MenuItem onClick={() => handleClose(UserAction.CHANGE_PASSWORD)}>
         <ListItemIcon>
           <VpnKeyOutlined fontSize="small"/>

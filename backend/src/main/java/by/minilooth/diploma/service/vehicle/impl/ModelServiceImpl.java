@@ -44,7 +44,7 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Model update(ProcessModel processModel, Long id) throws ModelNotFoundException {
-        Model model = getById(id).orElseThrow(() -> new ModelNotFoundException(id));
+        Model model = getById(id);
 
         model.setMake(processModel.getMake());
         model.setName(processModel.getName().trim());
@@ -60,7 +60,7 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Model delete(Long id) throws ModelNotFoundException, ActionIsImpossibleException {
-        Model model = getById(id).orElseThrow(() -> new ModelNotFoundException(id));
+        Model model = getById(id);
 
         if (generationService.existsByModel(model)) {
             throw new ActionIsImpossibleException("Невозможно удалить модель в которой существуют поколения");
@@ -75,18 +75,18 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public Optional<Model> getById(Long id) {
-        return modelRepository.findById(id);
+    public Model getById(Long id) throws ModelNotFoundException {
+        return modelRepository.findById(id).orElseThrow(() -> new ModelNotFoundException(id));
     }
 
     @Override
     public List<Model> getAllByMake(Long id) throws MakeNotFoundException {
-        return modelRepository.findAllByMake(makeService.getById(id).orElseThrow(() -> new MakeNotFoundException(id)));
+        return modelRepository.findAllByMake(makeService.getById(id));
     }
 
     @Override
     public List<Model> getAllByMakeSorted(Long id) throws MakeNotFoundException {
-        return modelRepository.findAllByMakeOrderByName(makeService.getById(id).orElseThrow(() -> new MakeNotFoundException(id)));
+        return modelRepository.findAllByMakeOrderByName(makeService.getById(id));
     }
 
     @Override

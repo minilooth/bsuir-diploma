@@ -10,6 +10,7 @@ import by.minilooth.diploma.models.ProcessUser;
 import by.minilooth.diploma.models.UserFilter;
 import by.minilooth.diploma.models.UserList;
 import by.minilooth.diploma.common.enums.UserSort;
+import by.minilooth.diploma.models.bean.cart.Cart;
 import by.minilooth.diploma.models.bean.users.ConfirmationToken;
 import by.minilooth.diploma.common.enums.SortDirection;
 import by.minilooth.diploma.repository.users.UserRepository;
@@ -75,6 +76,7 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(processUser.getPhoneNumber())
                 .avatar(processUser.getAvatar())
                 .authorities(new HashSet<>(Set.of(processUser.getRole())))
+                .cart(Cart.builder().build())
                 .build();
 
         save(user);
@@ -161,6 +163,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User enable(Long id) throws UserNotFoundException {
+        User user = getById(id).orElseThrow(() -> new UserNotFoundException("Не удалось найти пользователя"));
+
+        user.setIsAccountNonDisabled(true);
+        save(user);
+
+        return user;
+    }
+
+    @Override
     public User changePassword(ChangePassword changePassword) throws PasswordsAreDifferentException, BadPasswordException {
         User me = authService.getPrincipal();
 
@@ -168,7 +180,7 @@ public class UserServiceImpl implements UserService {
             throw new PasswordsAreDifferentException("Пароли не совпадают");
         }
 
-        if (!passwordEncoder.encode(changePassword.getOldPassword()).equals(me.getPassword())) {
+        if (!passwordEncoder.matches(changePassword.getOldPassword(), me.getPassword())) {
             throw new BadPasswordException("Неверный старый пароль");
         }
 
@@ -335,4 +347,24 @@ public class UserServiceImpl implements UserService {
         return comparator;
     }
 
+    @Override
+    public User updateProfile(User user) throws UserNotFoundException, UserAlreadyExistsException {
+        User principal = authService.getPrincipal();
+        User current = getById(principal.getId())
+                .orElseThrow(() -> new UserNotFoundException("Не удалось найти текущего пользователя"));
+
+        if (!StringUtils.equals(user.getPhoneNumber(), current.getPhoneNumber()) && (StringUtils.isEmpty(user.getPhoneNumber()) ||
+                existsByPhoneNumber(user.getPhoneNumber()))) {
+            throw new UserAlreadyExistsException("Пользователь с таким номером телефона уже существует");
+        }
+
+        current.setFirstname(user.getFirstname());
+        current.setMiddlename(user.getMiddlename());
+        current.setLastname(user.getLastname());
+        current.setPhoneNumber(user.getPhoneNumber());
+        current.setAvatar(user.getAvatar());
+
+        save(current);
+        return current;
+    }
 }

@@ -15,7 +15,7 @@ public interface CategoryService {
     Category update(ProcessCategory processCategory, Long id) throws CategoryNotFoundException;
     void delete(Category category);
     Category delete(Long id) throws CategoryNotFoundException, ActionIsImpossibleException;
-    Optional<Category> getById(Long id);
+    Category getById(Long id) throws CategoryNotFoundException;
     List<Category> getAll();
 
 }

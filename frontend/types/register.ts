@@ -1,5 +1,7 @@
 export enum RegisterStep {
   USERNAME,
   EMAIL,
-  CONFIRMATION_MAIL
+  PHONE_NUMBER,
+  INFORMATION,
+  SUCCESS
 }

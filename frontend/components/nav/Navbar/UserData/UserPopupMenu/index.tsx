@@ -14,7 +14,11 @@ import {AppRoutes} from "core/routes";
 
 import styles from 'components/nav/Navbar/UserData/UserPopupMenu/UserPopupMenu.module.scss';
 
-export const UserPopupMenu: React.FC = () => {
+interface UserPopupMenuProps {
+  onProfile: () => void;
+}
+
+export const UserPopupMenu: React.FC<UserPopupMenuProps> = ({onProfile}) => {
   const {enqueueSnackbar} = useSnackbar();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -31,16 +35,12 @@ export const UserPopupMenu: React.FC = () => {
 
   return (
     <List>
-      <Link href={AppRoutes.PROFILE}>
-        <a>
-          <ListItem button>
-            <ListItemIcon>
-              <UserIcon/>
-            </ListItemIcon>
-            <ListItemText disableTypography primary="Профиль" className="font-14"/>
-          </ListItem>
-        </a>
-      </Link>
+      <ListItem button onClick={onProfile}>
+        <ListItemIcon>
+          <UserIcon/>
+        </ListItemIcon>
+        <ListItemText disableTypography primary="Профиль" className="font-14"/>
+      </ListItem>
       <ListItem button onClick={logout}>
         <ListItemIcon>
           <LogoutIcon/>

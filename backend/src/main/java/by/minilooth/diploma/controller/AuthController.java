@@ -3,6 +3,7 @@ package by.minilooth.diploma.controller;
 import by.minilooth.diploma.dto.mapper.LoginParamsMapper;
 import by.minilooth.diploma.dto.mapper.RegisterParamsMapper;
 import by.minilooth.diploma.dto.mapper.RestorePasswordParamsMapper;
+import by.minilooth.diploma.exception.users.AuthorityNotFoundException;
 import by.minilooth.diploma.models.LoginParams;
 import by.minilooth.diploma.models.RegisterParams;
 import by.minilooth.diploma.dto.LoginParamsDto;
@@ -58,11 +59,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterParamsDto registerParamsDto) throws UserAlreadyExistsException {
-        RegisterParams registerParams = registerParamsMapper.toEntity(registerParamsDto);
-        User user = authService.register(registerParams);
-        UserDto userDto = userMapper.toDto(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
+    public ResponseEntity<?> register(@RequestBody @Validated(UserDto.Register.class) UserDto userDto)
+            throws UserAlreadyExistsException, AuthorityNotFoundException {
+        User user = userMapper.toEntity(userDto);
+        User registeredUser = authService.register(user);
+        UserDto registeredUserDto = userMapper.toDto(registeredUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(registeredUserDto);
     }
 
     @PostMapping("/restore-password")

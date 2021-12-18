@@ -40,7 +40,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group update(ProcessGroup processGroup, Long id) throws GroupNotFoundException {
-        Group group = getById(id).orElseThrow(() -> new GroupNotFoundException(id));
+        Group group = getById(id);
 
         group.setSubcategory(processGroup.getSubcategory());
         group.setName(processGroup.getName().trim());
@@ -56,7 +56,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public Group delete(Long id) throws GroupNotFoundException, ActionIsImpossibleException {
-        Group group = getById(id).orElseThrow(() -> new GroupNotFoundException(id));
+        Group group = getById(id);
 
         if (sparePartService.existsByGroup(group)) {
             throw new ActionIsImpossibleException("Невозможно удалить группу которая используется в запчасти");
@@ -67,8 +67,8 @@ public class GroupServiceImpl implements GroupService {
     }
 
     @Override
-    public Optional<Group> getById(Long id) {
-        return groupRepository.findById(id);
+    public Group getById(Long id) throws GroupNotFoundException {
+        return groupRepository.findById(id).orElseThrow(() -> new GroupNotFoundException(id));
     }
 
     @Override
@@ -78,7 +78,7 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public List<Group> getAllBySubcategory(Long id) throws SubcategoryNotFoundException {
-        Subcategory subcategory = subcategoryService.getById(id).orElseThrow(() -> new SubcategoryNotFoundException(id));
+        Subcategory subcategory = subcategoryService.getById(id);
         return groupRepository.findAllBySubcategory(subcategory);
     }
 

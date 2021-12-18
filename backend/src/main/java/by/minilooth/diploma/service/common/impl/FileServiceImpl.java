@@ -18,7 +18,7 @@ public class FileServiceImpl implements FileService {
         File file = new File(path);
 
         if (!file.exists()) {
-            throw new FileNotFoundException(String.format("Unable to find file at path: %s", path));
+            throw new FileNotFoundException(String.format("Не удалось найти файл по адресу: %s", path));
         }
 
         return new FileSystemResource(file);
@@ -39,7 +39,7 @@ public class FileServiceImpl implements FileService {
         fos.close();
 
         if (!written) {
-            throw new IllegalStateException("Failed to write image.");
+            throw new IllegalStateException("Не удалось записать изображение");
         }
 
         return filename;

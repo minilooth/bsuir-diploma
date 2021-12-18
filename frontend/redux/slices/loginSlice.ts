@@ -5,7 +5,7 @@ import {Axios} from "core/axios";
 import {AuthRoutes} from "core/api";
 import {AppDispatch, RootState} from "redux/store";
 
-interface LoginSliceState {
+export interface LoginSliceState {
   restorePasswordStep: RestorePasswordStep
 }
 
@@ -18,6 +18,7 @@ export const restorePassword = createAsyncThunk<void, string, {state: RootState,
   async (email: string) => {
     await Axios.post(AuthRoutes.RESTORE_PASSWORD, {email});
   })
+
 
 const loginSlice = createSlice({
   name: 'login',

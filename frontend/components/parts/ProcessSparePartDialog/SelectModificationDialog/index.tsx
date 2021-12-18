@@ -32,7 +32,8 @@ export const SelectModificationDialog: React.FC<SelectModificationDialog> = ({op
     mode: "onChange",
   })
   const modifications = useTypedSelector(selectModifications);
-  const options = modifications.filter(m => !selected.includes(m));
+
+  const options = modifications.filter(m => !selected.find(s => s.id === m.id));
 
   const onSubmit = (data: SelectModificationDialogFormData) => {
     const {modificationId} = data;

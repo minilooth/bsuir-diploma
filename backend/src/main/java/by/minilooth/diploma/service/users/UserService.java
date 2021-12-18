@@ -24,8 +24,10 @@ public interface UserService {
     void delete(User user);
     User delete(Long id) throws UserNotFoundException, ActionIsImpossibleException;
     User lock(Long id) throws UserNotFoundException, ActionIsImpossibleException;
+    User enable(Long id) throws UserNotFoundException;
     User changePassword(Long id, ChangePassword changePassword) throws UserNotFoundException, PasswordsAreDifferentException;
     User changePassword(ChangePassword changePassword) throws PasswordsAreDifferentException, BadPasswordException;
+    User updateProfile(User user) throws UserNotFoundException, UserAlreadyExistsException;
     Optional<User> getByUsername(String username);
     Optional<User> getByEmail(String email);
     List<User> getAll();

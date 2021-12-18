@@ -23,14 +23,14 @@ export const PasswordDroppedCard: React.FC = () => {
   return (
     <CenteredCard>
       <Typography variant="h4" className="d-flex align-center">
-        <Check fontSize="inherit" className="mr-10"/>Password Restored
+        <Check fontSize="inherit" className="mr-10"/>Пароль сброшен
       </Typography>
       <Typography variant="h5" className="mt-20 mb-20">
-        New password was sent to your e-mail. Now you can log in by your credentials.
+        Новый пароль отправлен вам на электронную почту. Теперь вы можете авторизоваться, используя новый пароль
       </Typography>
       <Box component="div" className="d-flex justify-center">
-        <Button type="submit" variant="outlined" color="primary" className="w-200" onClick={onLogIn}>
-          To Log In Page
+        <Button type="submit" variant="outlined" color="primary" className="mw-200" onClick={onLogIn}>
+          На страницу авторизации
         </Button>
       </Box>
     </CenteredCard>

@@ -89,7 +89,7 @@ export const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({isOld
         const {id} = user;
         await UserService.changePassword(form, id);
       } else {
-        // TODO: Profile change password;
+        await UserService.changePassword(form);
       }
       enqueueSnackbar('Пароль успешно изменен', SnackbarSuccessOptions);
       await dispatch(getAll(values));

@@ -4,9 +4,10 @@ import {MainContainer} from "components/common/MainContainer";
 import {wrapper} from "redux/store";
 import {withAuthServerSideProps} from "core/auth/withAuthServerSideProps";
 import {NextPage} from "next";
-import {getAddresses, getStores, selectStores, selectPages} from "redux/slices/storesSlice";
+import {getAddresses, getStores, selectPages, selectStores} from "redux/slices/storesSlice";
 import {useTypedSelector} from "redux/hooks";
 import {StoreList} from "components/stores/StoreList";
+import {RoleEnum} from "types/user";
 
 const Stores: NextPage = () => {
   const stores = useTypedSelector(selectStores);
@@ -29,7 +30,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => withAuth
     props: {}
   }
 }, {
-  authorizationNeeded: true
+  authorizationNeeded: true,
+  authorities: [RoleEnum.ADMIN]
 }, store))
 
 export default Stores;

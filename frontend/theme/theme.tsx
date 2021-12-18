@@ -35,27 +35,6 @@ export const theme = createTheme({
         }
       }
     },
-    // MuiInputLabel: {
-    //   styleOverrides: {
-    //     root: {
-    //       fontSize: 12
-    //     }
-    //   }
-    // },
-    // MuiFormLabel: {
-    //   styleOverrides: {
-    //     root: {
-    //       fontSize: 12
-    //     }
-    //   }
-    // },
-    // MuiSelect: {
-    //   styleOverrides: {
-    //     nativeInput: {
-    //       fontSize: 12
-    //     }
-    //   }
-    // },
     MuiTypography: {
       styleOverrides: {
         body1: {
@@ -80,6 +59,21 @@ export const theme = createTheme({
       styleOverrides: {
         label: {
           fontSize: 12
+        }
+      }
+    },
+    // @ts-ignore
+    MuiLoadingButton: {
+      styleOverrides: {
+        startIconLoadingStart: {
+          display: 'none'
+        },
+        loadingIndicator: {
+          display: 'inherit',
+          position: 'relative',
+          left: 0,
+          marginRight: '8px',
+          marginLeft: '-2px'
         }
       }
     }

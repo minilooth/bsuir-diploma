@@ -17,7 +17,7 @@ public interface ModelService {
     Model update(ProcessModel processModel, Long id) throws ModelNotFoundException;
     void delete(Model model);
     Model delete(Long id) throws ModelNotFoundException, ActionIsImpossibleException;
-    Optional<Model> getById(Long id);
+    Model getById(Long id) throws ModelNotFoundException;
     List<Model> getAllByMakeSorted(Long id) throws MakeNotFoundException;
     List<Model> getAllByMake(Long id) throws MakeNotFoundException;
     List<Model> getAll();

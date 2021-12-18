@@ -1,5 +1,6 @@
 package by.minilooth.diploma.service.users;
 
+import by.minilooth.diploma.exception.users.AuthorityNotFoundException;
 import by.minilooth.diploma.exception.users.UserAlreadyExistsException;
 import by.minilooth.diploma.exception.users.UserNotFoundException;
 import by.minilooth.diploma.models.LoginParams;
@@ -19,7 +20,7 @@ public interface AuthService extends UserDetailsService {
     User getPrincipal();
     User authorize(LoginParams params, HttpServletResponse res);
     void removeTokenCookie(HttpServletResponse res);
-    User register(RegisterParams params) throws UserAlreadyExistsException;
+    User register(User user) throws UserAlreadyExistsException, AuthorityNotFoundException;
     void restorePassword(RestorePasswordParams params) throws UserNotFoundException;
     Boolean isUsernameBusy(String username);
     Boolean isEmailBusy(String email);

@@ -44,11 +44,12 @@ export interface StoreSortItem {
 export interface StoreTypeItem {
   key: StoreType;
   label: string;
+  query: string;
 }
 
 export const StoreTypes: StoreTypeItem[] = [
-  {key: StoreType.STORAGE, label: 'Склад'},
-  {key: StoreType.SHOP, label: 'Магазин'}
+  {key: StoreType.STORAGE, label: 'Склад', query: 'storage'},
+  {key: StoreType.SHOP, label: 'Магазин', query: 'shop'}
 ]
 
 export const StoreSortItems: StoreSortItem[] = [
@@ -58,9 +59,9 @@ export const StoreSortItems: StoreSortItem[] = [
 ]
 
 export interface StoreFilter {
-  sort: StoreSort;
-  sortDirection: SortDirection;
-  type: StoreType;
+  sort: string;
+  sortDirection: string;
+  type: string;
   addressId: number;
   search: string;
   page: number;

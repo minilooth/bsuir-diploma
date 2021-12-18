@@ -8,6 +8,7 @@ import {UserList} from "components/users/UserList";
 import {wrapper} from "redux/store";
 import {useTypedSelector} from "redux/hooks";
 import {getAll, selectPages, selectUsers} from "redux/slices/usersSlice";
+import {RoleEnum} from "types/user";
 
 const Users: NextPage = () => {
   const users = useTypedSelector(selectUsers);
@@ -29,7 +30,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => withAuth
     props: {}
   }
 }, {
-  authorizationNeeded: true
+  authorizationNeeded: true,
+  authorities: [RoleEnum.ADMIN]
 }, store))
 
 export default Users;

@@ -83,8 +83,8 @@ export const ProcessAddressDialog: React.FC<ProcessAddressDialogProps> = ({open,
           />
           <Input
             {...register('room')}
-            label={'Квартира/помещение'}
-            placeholder={'Введите номер квартиры/помещения'}
+            label={'Квартира/помещение/офис'}
+            placeholder={'Введите номер квартиры/помещения/офис'}
             inputProps={{startAdornment: <InputAdornment position={"start"}/>}}
             error={!!errors.room}
             helperText={errors?.room?.message}

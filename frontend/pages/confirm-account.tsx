@@ -2,16 +2,17 @@ import {NextPage} from "next";
 
 import {CommonLayout} from "components/layouts/CommonLayout";
 import {MainContainer} from "components/common/MainContainer";
-import {SuccessConfirmAccountCard as ConfirmAccountCard} from "components/register/SuccessConfirmAccountCard";
+import {ConfirmCard} from "components/register/ConfirmCard";
 import {withAuthServerSideProps} from "core/auth/withAuthServerSideProps";
 import {Axios} from "core/axios";
 import {AccountRoutes} from "core/api";
+import {AppRoutes} from "core/routes";
 
-const SuccessConfirmAccountCard: NextPage = () => {
+const ConfirmAccountPage: NextPage = () => {
   return (
     <CommonLayout title='Success Confirm'>
       <MainContainer>
-        <ConfirmAccountCard/>
+        <ConfirmCard/>
       </MainContainer>
     </CommonLayout>
   )
@@ -19,6 +20,17 @@ const SuccessConfirmAccountCard: NextPage = () => {
 
 export const getServerSideProps = withAuthServerSideProps(async (ctx, user) => {
   const {query: {token}} = ctx;
+
+  if (!token) {
+    return {
+      props: {
+        redirect: {
+          destination: AppRoutes.LOGIN,
+          permanent: true
+        }
+      }
+    }
+  }
 
   try {
     await Axios.get(AccountRoutes.CONFIRM_ACCOUNT, {params: {token}});
@@ -31,4 +43,4 @@ export const getServerSideProps = withAuthServerSideProps(async (ctx, user) => {
   canAccessAuthorized: false
 })
 
-export default SuccessConfirmAccountCard;
+export default ConfirmAccountPage;

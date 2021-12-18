@@ -17,15 +17,14 @@ import javax.persistence.*;
 public class Availability implements BaseEntity, Comparable<Availability> {
 
     @EmbeddedId
-    @EqualsAndHashCode.Exclude
     private AvailabilityKey id;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne
     @MapsId("storeId")
     @JoinColumn(name = "store_id", nullable = false)
     private Store store;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToOne
     @MapsId("sparePartId")
     @JoinColumn(name = "spare_part_id", nullable = false)
     private SparePart sparePart;

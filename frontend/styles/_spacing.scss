@@ -29,11 +29,17 @@ $sides: (
   .w-#{$px * 50} {
     width: #{$px * 50}px !important;
   }
+  .mw-#{$px * 50} {
+    min-width: #{$px * 50}px !important;
+  }
 }
 
 @for $px from 1 through 20 {
   .wp-#{$px * 5} {
     width: #{$px * 5}#{'%'} !important;
+  }
+  .mwp-#{$px * 5} {
+    min-width: #{$px * 5}#{'%'} !important;
   }
 }
 

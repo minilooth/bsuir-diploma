@@ -1,5 +1,6 @@
 package by.minilooth.diploma.dto.spareparts;
 
+import by.minilooth.diploma.dto.ImageDto;
 import by.minilooth.diploma.dto.api.BaseDto;
 import by.minilooth.diploma.dto.spareparts.catalog.CategoryDto;
 import by.minilooth.diploma.dto.spareparts.catalog.GroupDto;
@@ -28,5 +29,6 @@ public class ProcessSparePartDto implements BaseDto {
     private CategoryDto category;
     private SubcategoryDto subcategory;
     private GroupDto group;
+    private ImageDto image;
 
 }

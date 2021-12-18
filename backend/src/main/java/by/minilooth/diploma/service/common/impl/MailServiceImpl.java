@@ -23,12 +23,13 @@ public class MailServiceImpl implements MailService {
             SimpleMailMessage message = new SimpleMailMessage();
 
             message.setTo(user.getEmail());
-            message.setSubject("Complete Registration!");
+            message.setSubject("Успешная регистрация!");
             message.setFrom("no-reply@minilooth.by");
-            message.setText("To confirm your e-mail, please click here : " +
+            message.setText("Чтобы подтвердить ваш адрес электронной почты, пожалуйста перейдите по ссылке: " +
                     "http://localhost:3000/confirm-account?token=" + confirmationToken.getToken() + '\n' +
-                    "Your username: " + user.getUsername() +
-                    "Your password: " + password);
+                    "Ваши данные для входа:\n" +
+                    "Имя пользователя: " + user.getUsername() + "\n" +
+                    "Пароль: " + password);
 
             emailSender.send(message);
         }
@@ -40,9 +41,9 @@ public class MailServiceImpl implements MailService {
             SimpleMailMessage message = new SimpleMailMessage();
 
             message.setTo(user.getEmail());
-            message.setSubject("Restore Password");
+            message.setSubject("Восстановление пароля");
             message.setFrom("no-reply@minilooth.by");
-            message.setText("Your password: " + password);
+            message.setText("Ваш новый пароль: " + password);
 
             emailSender.send(message);
         }
@@ -54,9 +55,9 @@ public class MailServiceImpl implements MailService {
             SimpleMailMessage message = new SimpleMailMessage();
 
             message.setTo(user.getEmail());
-            message.setSubject("Complete Registration!");
+            message.setSubject("Успешная регистрация!");
             message.setFrom("no-reply@minilooth.by");
-            message.setText("To confirm your e-mail, please click here : " +
+            message.setText("Чтобы подтвердить ваш адрес электронной почты, пожалуйста перейдите по ссылке: " +
                     "http://localhost:3000/confirm-account?token=" + confirmationToken.getToken());
 
             emailSender.send(message);

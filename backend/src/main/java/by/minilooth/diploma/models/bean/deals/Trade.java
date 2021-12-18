@@ -1,13 +1,9 @@
 package by.minilooth.diploma.models.bean.deals;
 
 import by.minilooth.diploma.models.api.BaseEntity;
-import by.minilooth.diploma.models.bean.deals.Deal;
 import by.minilooth.diploma.models.bean.keys.TradeKey;
 import by.minilooth.diploma.models.bean.spareparts.SparePart;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -17,18 +13,19 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Data
+@EqualsAndHashCode
 public class Trade implements BaseEntity {
 
     @EmbeddedId
     private TradeKey id;
 
     @ManyToOne
-    @MapsId("deal")
+    @MapsId("dealId")
     @JoinColumn(name = "deal_id", nullable = false)
     private Deal deal;
 
     @ManyToOne
-    @MapsId("sparePart")
+    @MapsId("sparePartId")
     @JoinColumn(name = "spare_part_id", nullable = false)
     private SparePart sparePart;
 
@@ -39,6 +36,6 @@ public class Trade implements BaseEntity {
     private Float retailPrice;
 
     @Column(name = "quantity", nullable = false)
-    private Integer quantity;
+    private Long quantity;
 
 }

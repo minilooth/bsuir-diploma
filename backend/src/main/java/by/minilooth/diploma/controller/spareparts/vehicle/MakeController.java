@@ -25,12 +25,20 @@ public class MakeController {
     @Autowired private MakeService makeService;
     @Autowired private ProcessMakeMapper processMakeMapper;
 
-    @GetMapping
+    @GetMapping("/all")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
-    public ResponseEntity<?> get() {
+    public ResponseEntity<?> getAll() {
         List<Make> makes = makeService.getAllSorted();
         List<MakeDto> makeDtos = makeMapper.toDto(makes);
         return ResponseEntity.ok(makeDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws MakeNotFoundException {
+        Make make = makeService.getById(id);
+        MakeDto makeDto = makeMapper.toDto(make);
+        return ResponseEntity.ok(makeDto);
     }
 
     @PutMapping

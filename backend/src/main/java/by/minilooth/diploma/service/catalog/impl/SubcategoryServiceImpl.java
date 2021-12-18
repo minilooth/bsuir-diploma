@@ -42,7 +42,7 @@ public class SubcategoryServiceImpl implements SubcategoryService {
 
     @Override
     public Subcategory update(ProcessSubcategory processSubcategory, Long id) throws SubcategoryNotFoundException {
-        Subcategory subcategory = getById(id).orElseThrow(() -> new SubcategoryNotFoundException(id));
+        Subcategory subcategory = getById(id);
 
         subcategory.setCategory(processSubcategory.getCategory());
         subcategory.setName(processSubcategory.getName().trim());
@@ -58,7 +58,7 @@ public class SubcategoryServiceImpl implements SubcategoryService {
 
     @Override
     public Subcategory delete(Long id) throws SubcategoryNotFoundException, ActionIsImpossibleException {
-        Subcategory subcategory = getById(id).orElseThrow(() -> new SubcategoryNotFoundException(id));
+        Subcategory subcategory = getById(id);
 
         if (groupService.existsBySubcategory(subcategory)) {
             throw new ActionIsImpossibleException("Невозможно удалить подкатегорию в которой существуют группы");
@@ -73,8 +73,8 @@ public class SubcategoryServiceImpl implements SubcategoryService {
     }
 
     @Override
-    public Optional<Subcategory> getById(Long id) {
-        return subcategoryRepository.findById(id);
+    public Subcategory getById(Long id) throws SubcategoryNotFoundException {
+        return subcategoryRepository.findById(id).orElseThrow(() -> new SubcategoryNotFoundException(id));
     }
 
     @Override
@@ -84,7 +84,7 @@ public class SubcategoryServiceImpl implements SubcategoryService {
 
     @Override
     public List<Subcategory> getAllByCategory(Long id) throws CategoryNotFoundException {
-        Category category = categoryService.getById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        Category category = categoryService.getById(id);
         return subcategoryRepository.findAllByCategory(category);
     }
 

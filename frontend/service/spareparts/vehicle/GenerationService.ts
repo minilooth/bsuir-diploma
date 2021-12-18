@@ -2,13 +2,22 @@ import {Generation, ProcessGeneration} from "types/spareparts/vehicle/generation
 import {Axios} from "core/axios";
 import {IncomingHttpHeaders} from "http";
 
+enum GenerationRoutes {
+  ALL = '/all'
+}
+
 export class GenerationService {
 
   private static readonly URL = '/generation';
 
   static async getAll(modelId: number | string, headers?: IncomingHttpHeaders): Promise<Generation[]> {
-    const {data: generations} = await Axios.get<Generation[]>(`${this.URL}/${modelId}`, {headers});
+    const {data: generations} = await Axios.get<Generation[]>(`${this.URL + GenerationRoutes.ALL}/${modelId}`, {headers});
     return generations;
+  }
+
+  static async getById(id: number | string, headers: IncomingHttpHeaders = {}): Promise<Generation> {
+    const {data: generation} = await Axios.get<Generation>(`${this.URL}/${id}`, {headers});
+    return generation;
   }
 
   static async add(processGeneration: ProcessGeneration): Promise<Generation> {

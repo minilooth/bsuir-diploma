@@ -1,13 +1,13 @@
-import {Store, StoreFilter, StoreSort, StoreType, } from "types/stores/store";
+import {Store, StoreFilter, StoreSort, StoreSortItems, StoreType, StoreTypes,} from "types/stores/store";
 import {Address} from "types/stores/address";
 import {createAsyncThunk, createSlice, PayloadAction} from "@reduxjs/toolkit";
 import {IncomingHttpHeaders} from "http";
 import {StoreService} from "service/stores/StoreService";
 import {AddressService} from "service/stores/AddressService";
 import {RootState} from "redux/store";
-import {SortDirection} from "types/common/sort-direction";
+import {SortDirection, SortDirections} from "types/common/sort-direction";
 
-interface StoresSliceState {
+export interface StoresSliceState {
   stores: Store[];
   pages: number;
   addresses: Address[];
@@ -23,18 +23,20 @@ export const getStores = createAsyncThunk(
   'stores/getStores',
   async ({query, headers = {}}: any) => {
     const {search, page, addressId} = query;
-    const sort = StoreSort[query.sort as keyof typeof StoreSort];
-    const sortDirection = SortDirection[query.sortDirection as keyof typeof SortDirection];
-    const type = StoreType[query.type as keyof typeof StoreType];
+
+    const sort = Object.keys(StoreSort).find(key => StoreSort[key as keyof typeof StoreSort] === StoreSortItems.find(i => i.query === query.sort)?.field);
+    const sortDirection = Object.keys(SortDirection).find(key => SortDirection[key as keyof typeof SortDirection] === SortDirections.find(i => i.query === query.sortDirection)?.key);
+    const type = Object.keys(StoreType).find(key => StoreType[key as keyof typeof StoreType] === StoreTypes.find(i => i.query === query.type)?.key);
 
     const filter: StoreFilter = {
-      sort,
-      sortDirection,
-      type,
+      sort: sort as string,
+      sortDirection: sortDirection as string,
+      type: type as string,
       addressId,
       search,
       page
     };
+    console.log(filter)
     return await StoreService.getAll(filter, headers);
   }
 )

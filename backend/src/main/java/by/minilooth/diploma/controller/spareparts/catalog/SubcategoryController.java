@@ -26,12 +26,20 @@ public class SubcategoryController {
     @Autowired private SubcategoryMapper subcategoryMapper;
     @Autowired private ProcessSubcategoryMapper processSubcategoryMapper;
 
-    @GetMapping("/{id}")
+    @GetMapping("/all/{id}")
     @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
-    public ResponseEntity<?> getByCategory(@PathVariable("id") Long id) throws CategoryNotFoundException {
+    public ResponseEntity<?> getAll(@PathVariable("id") Long id) throws CategoryNotFoundException {
         List<Subcategory> subcategories = subcategoryService.getAllByCategory(id);
         List<SubcategoryDto> subcategoryDtos = subcategoryMapper.toDto(subcategories);
         return ResponseEntity.ok(subcategoryDtos);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('" + Role.ADMIN + "','" + Role.EMPLOYEE + "')")
+    public ResponseEntity<?> getById(@PathVariable("id") Long id) throws SubcategoryNotFoundException {
+        Subcategory subcategory = subcategoryService.getById(id);
+        SubcategoryDto subcategoryDto = subcategoryMapper.toDto(subcategory);
+        return ResponseEntity.ok(subcategoryDto);
     }
 
     @PutMapping

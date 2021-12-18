@@ -5,7 +5,8 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle, InputAdornment,
+  DialogTitle,
+  InputAdornment,
   MenuItem,
   Typography
 } from "@mui/material";
@@ -14,12 +15,12 @@ import {useForm} from "react-hook-form";
 import {Form} from "components/common/Form";
 import {SortItems, UserSort} from "types/user";
 import {Dropdown} from "components/common/Dropdown";
-import {SortDirection} from "types/common/sort-direction";
+import {SortDirection, SortDirections} from "types/common/sort-direction";
 import {useQuery} from "core/hooks/useQuery";
 import {Input} from "components/common/Input";
 import {yupResolver} from "@hookform/resolvers/yup";
 import {UserFilterSchema} from "schemas/users";
-import {DateUtils} from "utils/DateUtils";
+import {DATE_FORMAT, DateUtils} from "utils/DateUtils";
 import {MaskedInput} from "components/common/MaskedInput";
 
 interface UserFilterProps {
@@ -47,8 +48,8 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
       fullname: values.fullname,
       email: values.email,
       phoneNumber: values.phoneNumber,
-      registerDateFrom: values.registerDateFrom ? DateUtils.formatFromNumber(values.registerDateFrom) : null,
-      registerDateTo: values.registerDateTo ? DateUtils.formatFromNumber(values.registerDateTo) : null
+      registerDateFrom: values.registerDateFrom ? new Date(Number(values.registerDateFrom)) : null,
+      registerDateTo: values.registerDateTo ? new Date(Number(values.registerDateTo)) : null
     },
     resolver: yupResolver(UserFilterSchema)
   })
@@ -58,13 +59,13 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
   const onSubmit = async (data: UserFilterData) => {
     const {sort: sortField, sortDirection, fullname, email, phoneNumber, registerDateFrom, registerDateTo} = data;
     appendToQuery({
-      sort: sortField?.toString(),
-      sortDirection: sortDirection?.toString(),
+      sort: sortField,
+      sortDirection: sortDirection,
       fullname,
       email,
       phoneNumber,
       registerDateFrom: registerDateFrom ? new Date(registerDateFrom).getTime() : null,
-      registerDateTo: registerDateTo ? new Date(registerDateTo)?.getTime() : null
+      registerDateTo: registerDateTo ? new Date(registerDateTo).getTime() : null
     })
     await push();
     onClose();
@@ -126,8 +127,8 @@ export const UserFilter: React.FC<UserFilterProps> = ({open, onClose}) => {
                 helperText={errors?.sortDirection?.message}
               >
                 <MenuItem value={''}>Выберите...</MenuItem>
-                {Object.entries(SortDirection).map(([key, value], index) =>
-                  <MenuItem value={key} key={index}>{value}</MenuItem>
+                {SortDirections.map((item, index) =>
+                  <MenuItem value={item.query} key={index}>{item.label}</MenuItem>
                 )}
               </Dropdown>
             )}

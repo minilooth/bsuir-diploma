@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category update(ProcessCategory processCategory, Long id) throws CategoryNotFoundException {
-        Category category = getById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        Category category = getById(id);
 
         category.setName(processCategory.getName().trim());
 
@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category delete(Long id) throws CategoryNotFoundException, ActionIsImpossibleException {
-        Category category = getById(id).orElseThrow(() -> new CategoryNotFoundException(id));
+        Category category = getById(id);
 
         if (subcategoryService.existsByCategory(category)) {
             throw new ActionIsImpossibleException("Невозможно удалить категорию в которой существуют подкатегории");
@@ -69,8 +69,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> getById(Long id){
-        return categoryRepository.findById(id);
+    public Category getById(Long id) throws CategoryNotFoundException {
+        return categoryRepository.findById(id).orElseThrow(() -> new CategoryNotFoundException(id));
     }
 
     @Override
