@@ -1,0 +1,28 @@
+.avatarWrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.avatarContainer {
+  width: 200px;
+}
+
+.formContainer {
+  width: calc(100% - 200px - 2 * 8px);
+}
+
+.infoItem {
+  width: 50%;
+
+  &.key {
+    text-align: left;
+  }
+
+  &.value {
+    text-align: right;
+    overflow-x: auto;
+  }
+}
